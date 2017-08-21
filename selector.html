@@ -37,6 +37,12 @@ $ul.append (createListItems(options));
 
 select ();
 
+$ul.on ("click", function (e) {
+let index = $(e.target).index ();
+$select[0].selectedIndex = index;
+visuallySelect (index);
+});
+
 $result.on ("click", () => {
 $result.attr ("aria-expanded", "true");
 $select.focus()
