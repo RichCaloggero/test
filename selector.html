@@ -1,0 +1,77 @@
+<!doctype html>
+<html>
+<meta charset="utf-8">
+<title>Selector</title>
+<script src="jquery.min.js"></script>
+
+<style>
+.selector .screenReader-select {position: absolute; left: -999999; overflow: none;}
+.selector .visual-select {list-style-type: none;}
+</style>
+</head>
+<body>
+<h1>Test</h1>
+
+<p><a href="#">Dummy link</a></p>
+
+<div id="my-selector" class="selector" role="region" aria-labelledby="my-selector-label">
+<span id="my-selector-label">Select something:</span>
+
+<button class="result" aria-expanded="false"></button>
+<ul class="visual-select" aria-hidden="true"></ul>
+<select class="screenReader-select" tabindex="-1"></select>
+</div>
+
+<script>
+"use strict";
+
+//$(function () {
+let optionString = "[nothing selected], first selection, second selection, another option, cool selection, last selection";
+let options = optionString.split(",").map(item => item.trim());
+let $result = $(".selector .result");
+let $ul = $(".selector .visual-select");
+let $select = $(".selector .screenReader-select");
+
+$select.append (createOptions(options));
+$ul.append (createListItems(options));
+
+select ();
+
+$result.on ("click", () => {
+$result.attr ("aria-expanded", "true");
+$select.focus()
+});
+$select.on ("blur", () => $result.attr("aria-expanded", "false"));
+
+$select.on ("change", e => select());
+
+function select () {
+let index = $select[0].selectedIndex;
+visuallySelect (index);
+$result.text ($select.val());
+} // select
+
+function visuallySelect (index) {
+$ul.find("li").get(index).style.backgroundColor = "green";
+} // visuallySelect
+
+
+function createOptions (list) {
+let $options = $();
+list.forEach (item => $options = $options.add (`<option>${item}</option>`));
+return $options;
+} // createOptions
+
+function createListItems (list) {
+let $listItems = $();
+list.forEach (item => $listItems = $listItems.add (`<li>${item}</li>`));
+return $listItems;
+} // createListItems
+
+
+//}); // ready
+
+</script>
+
+</body>
+</html>
