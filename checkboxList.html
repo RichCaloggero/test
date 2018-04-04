@@ -18,6 +18,7 @@ let options = optionString.split(",").map(item => item.trim());
 
 
 $("ul").append (createListItems (options, "checkbox"));
+$("ul").on ("click", (e) => message (getChecked($("ul")).join (", "));
 
 function createOptions (list) {
 let $options = $();
@@ -38,8 +39,13 @@ return $listItems;
 } // createListItems
 
 function getChecked ($list) {
-
+return $list.find("input").get().map (item => item.value);
 } // getChecked
+
+
+function message (text) {
+$("#message").text (text);
+} // message
 
 </script>
 
