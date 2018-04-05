@@ -1,0 +1,85 @@
+<!doctype html>
+<html>
+<meta charset="utf-8">
+<title>Test</title>
+<script src="http://code.jquery.com/jquery.min.js"></script>
+<style>
+.fields.list {list-style-type: none;}
+</style>
+
+</head>
+<body>
+<h1>Test</h1>
+
+<div role="region" id="availableFields">
+<ul class="fields list"></ul>
+</div><div role="region" id="activeFields">
+<ul class="fields list"></ul>
+</div>
+
+<hr>
+<div id="message" aria-live="polite">
+</div>
+
+<script>
+"use strict";
+let fieldNames = "name, id, date, eMail, phone, address, active";
+let fieldList = fieldNames.split(",").map(item => item.trim());
+
+$("#availableFields .list").append (createListItems (fieldList, "toggleButton"));
+
+$("#availableFields .list").on ("click", (e) => {
+let $available = $(e.target).closest(".list");
+let $field = $(e.target);
+$field.attr ("aria-pressed",
+$field.attr("aria-pressed") === "true"? "false" : "true"
+); // toggle
+
+$("#activeFields .list").empty ()
+.append (
+createListItems (getPressed ($available), "button")
+); // append
+return false;
+});
+
+function createListItems (list, type) {
+let $listItems = $();
+if (type === "button") {
+list.forEach ((item, index) => $listItems = $listItems.add (`<li><button>
+${item}
+</button></li>`));
+
+} else if (type === "toggleButton") {
+list.forEach ((item, index) => $listItems = $listItems.add (`<li><button aria-pressed="false">
+${item}
+</button></li>`));
+
+} else if (type === "radio" || type === "checkbox") {
+list.forEach ((item, index) => $listItems = $listItems.add (`<li><label>
+${item} <input type="${type}" value="${index}"></label>
+</li>`));
+
+} else {
+list.forEach (item => $listItems = $listItems.add (`<li>${item}</li>`));
+} // if
+
+return $listItems;
+} // createListItems
+
+function getChecked ($list) {
+return $list.find("input").get().filter (x => x.checked).map (item => item.value);
+} // getChecked
+
+function getPressed ($list, indexes) {
+return $list.find("button[aria-pressed='true']").get()
+.map ((item, index) => indexes? index : item.textContent);
+} // getPressed
+
+function message (text) {
+$("#message").text (text);
+} // message
+
+</script>
+
+</body>
+</html>
