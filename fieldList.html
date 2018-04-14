@@ -16,10 +16,7 @@
 
 <div id="container">
 <div role="region" aria-label="available fields" id="availableFields">
-<button class="clear">Clear</button>
-<ul class="fields list"></ul>
 </div><div role="region" aria-label="active fields" id="activeFields">
-<ul class="fields list"></ul>
 </div>
 </div><!-- .container -->
 
@@ -30,26 +27,36 @@
 <script>
 "use strict";
 let fieldNames = "name, id, date, eMail, phone, address, active";
-let fieldList = fieldNames.split(",").map(item => item.trim());
-let $available = $("#availableFields .list");
-let $active = $("#activeFields .list");
+createFieldChooser (fieldNames, $("#availableFields"), $("#activeFields"));
 
-$available.append (createListItems (fieldList, "toggleButton"));
+
+function createFieldChooser (fieldNames, $available, $active) {
+let fieldList;
+if (typeof(fieldNames) === "string" || fieldNames instanceof String)
+fieldList = fieldNames.split(",").map(item => item.trim());
+else fieldList = fieldNames; // assume it's an array
+
+$available.append ('<button class="clear">Clear</button>');
+$available.append ('<ul class="field list"></ul>');
+$active.append ('<ul class="field list"></ul>');
+
+$(".list", $available).append (createListItems (fieldList, '<button aria-pressed="false"></button>'));
 
 $available.on ("click", (e) => {
+let $activeFields = $(".list", $active);
 let $field = $(e.target);
 togglePressed ($field);
 
-$active.empty ()
-.append (
-createListItems ($("[aria-pressed='true']", $available).map((i,x) => x.textContent).get(), "button")
-); // append
+$activeFields.empty ()
+.append (createListItems (
+$(".list [aria-pressed='true']", $available).map((i,x) => x.textContent).get(),
+'<button></button>')); // append
 return false;
 }); // click on $available
 
-$("#activeFields .list").on ("click", (e) => {
+$active.on ("click", (e) => {
 // are any pressed
-let $pressed = $("#activeFields [aria-pressed='true']");
+let $pressed = $(".list [aria-pressed='true']", $active);
 if ($pressed.length === 0) {
 $(e.target).attr("aria-pressed", "true");
 } else if ($pressed.length === 1) {
@@ -73,30 +80,9 @@ function clearPressed ($buttons) {
 $buttons.attr ("aria-pressed", "false");
 } // clearPressed
 
-function createListItems (list, type) {
-let $listItems = $();
-if (type === "button") {
-list.forEach ((item, index) => $listItems = $listItems.add (`<li><button>
-${item}
-</button></li>`));
-
-} else if (type === "toggleButton") {
-list.forEach ((item, index) => $listItems = $listItems.add (`<li><button aria-pressed="false">
-${item}
-</button></li>`));
-
-} else if (type === "radio" || type === "checkbox") {
-list.forEach ((item, index) => $listItems = $listItems.add (`<li><label>
-${item} <input type="${type}" value="${index}"></label>
-</li>`));
-
-} else {
-list.forEach (item => $listItems = $listItems.add (`<li>${item}</li>`));
-} // if
-
-return $listItems;
+function createListItems (list, html, type) {
+return list.map (item => $(`<li>${item}</li>`).wrapInner (html));
 } // createListItems
-
 
 function getChecked ($list) {
 return $list.find("input").get().filter (x => x.checked).map (item => item.value);
@@ -106,6 +92,7 @@ function getPressed ($list, indexes) {
 return $list.find("button[aria-pressed='true']").get()
 .map ((item, index) => indexes? index : item.textContent);
 } // getPressed
+} // createFieldChooser
 
 function message (text) {
 $("#message").text (text);
