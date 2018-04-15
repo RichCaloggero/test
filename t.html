@@ -1,6 +1,7 @@
 <!doctype html>
 <html>
 <body>
+<ul></ul>
 
 <div id="container">
 </div>
@@ -16,24 +17,34 @@ let data = [
 [4, 16, 64, 3],
 [5, 25, 125, 5]
 ];
+makeList(fieldNames);
+
+function makeList(data) {
+let listUpdate = d3.select("ul").selectAll("li").data(data, d => d);
+listUpdate.exit().remove();
+listUpdate = listUpdate.enter().append("li").html(d => `<button>${d}</button>`).merge(listUpdate);
+} // makeList
 
 createTable ("#container", fieldNames, data);
 
 function createTable (selector, fieldNames, data) {
-  const updateRows = d3.select(selector)
+  let updateRows = d3.select(selector)
     .append ("table")
 .selectAll("tr")
-    .data(data)
-.enter().append ("tr");
+    .data([fieldNames].concat(data));
 
-const updateColumns = updateRows.selectAll ("td")
-.data (d => d)
-  .enter().append ("td")
-.text (d => d);
+updateRows.exit().remove();
+
+updateRows = updateRows.enter().append ("tr");
+
+let updateColumns = updateRows.selectAll ("td")
+.data ((d,i,g) => {/*alert(`d: ${d}, i: ${i}, g: ${g}`);*/ g[0].classList.add("headers"); return d;});
   
-//updateRows.exit().remove();
-//updateColumns.exit().remove();
-} // createTable
+updateColumns.exit().remove();
+
+updateColumns = updateColumns.enter().append ((d,i,g) => {return g[i]._parent.classList.contains("headers")? document.createElement("th") : document.createElement("td");})
+.text (d => d);
+ } // createTable
 </script>
 
 </body>
