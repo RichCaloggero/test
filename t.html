@@ -1,5 +1,9 @@
 <!doctype html>
 <html>
+<head>
+<meta charset="utf-8">
+<title>Test</title>
+</head>
 <body>
 <ul></ul>
 
@@ -17,6 +21,28 @@ let data = [
 [4, 16, 64, 3],
 [5, 25, 125, 5]
 ];
+
+createTable ("#container", fieldNames, data);
+
+function createTable (selector, fieldNames, data) {
+  $("<table><thead><tr></tr></thead><tbody></tbody></table>").appendTo (selector);
+
+let headerRow = d3.select(`${selector} table thead tr`)
+.selectAll ("th").data (fieldNames)
+.enter().append ("th")
+.text (d => d);
+
+let bodyRows = d3.select(`${selector} tbody`)
+.selectAll ("tr").data(data)
+.enter().append ("tr");
+
+let updateColumns = bodyRows.selectAll ("td")
+.data (d => d)
+.enter().append ("td")
+.text (d => d);
+} // createTable
+
+
 makeList(fieldNames);
 
 function makeList(data) {
@@ -24,27 +50,6 @@ let listUpdate = d3.select("ul").selectAll("li").data(data, d => d);
 listUpdate.exit().remove();
 listUpdate = listUpdate.enter().append("li").html(d => `<button>${d}</button>`).merge(listUpdate);
 } // makeList
-
-createTable ("#container", fieldNames, data);
-
-function createTable (selector, fieldNames, data) {
-  let updateRows = d3.select(selector)
-    .append ("table")
-.selectAll("tr")
-    .data([fieldNames].concat(data));
-
-updateRows.exit().remove();
-
-updateRows = updateRows.enter().append ("tr");
-
-let updateColumns = updateRows.selectAll ("td")
-.data ((d,i,g) => {/*alert(`d: ${d}, i: ${i}, g: ${g}`);*/ g[0].classList.add("headers"); return d;});
-  
-updateColumns.exit().remove();
-
-updateColumns = updateColumns.enter().append ((d,i,g) => {return g[i]._parent.classList.contains("headers")? document.createElement("th") : document.createElement("td");})
-.text (d => d);
- } // createTable
 </script>
 
 </body>
