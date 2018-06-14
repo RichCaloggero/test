@@ -1,39 +1,124 @@
 <!doctype html>
 <html>
+<head>
+<meta charset="utf-8">
+<title>JS-Eval</title>
+</head>
 <body>
 <div id="input">
-<label>js> <input type="text" class="text"></label>
+<label>js> <input autofocus type="text" class="text"></label>
 </div>
 
-<div id="output" aria-live="polite">
-<pre class="text"></pre>
+<div id="output">
 </div>
 
 <script>
 "use strict";
 let $ = document.querySelector.bind(document);
 let input = $("#input .text");
-let output = $("#output .text");
+let output = $("#output");
+let history = [];
+let commandIndex = 0;
 
 input.addEventListener ("keyup", (e) => {
-if (e.key === "Enter") e.target.dispatchEvent(new CustomEvent("click", {bubbles: true}))
+switch (e.key) {
+case "Enter": return triggerCommandExecution();
+case "ArrowUp": return previousCommand();
+case "ArrowDown": return nextCommand();
+} // switch
+return true;
 });
 
-input.addEventListener ("click", (e) => {
-evaluate(e.target.value, output)
+input.addEventListener ("click", (e) => triggerCommandExecution());
+input.addEventListener ("execute", () => {
+if (input.value) executeCommand (input.value, output)
+clearInput ();
+return false;
+});
+
+function clearInput () {
 input.value = "";
-});
+} // clearInput
 
-function evaluate (expression, output) {
-let result = new Function (`{
+function triggerCommandExecution () {
+input.dispatchEvent (new CustomEvent("execute", {bubbles: true}));
+} // triggerCommandExecution
+
+function executeCommand (expression, output) {
+history.push (expression);
+commandIndex = history.length;
+return displayResult (evaluate(expression), expression, output);
+} // executeCommand
+
+function evaluate (expression) {
+return new Function (`{
 "use strict";
-return (${expression});
+try {
+return ${expression};
+} catch (e) {
+return e;
+} // catch
 }`)
 ();
-
-output.textContent = result;
-return result;
 } // evaluate
+
+
+function displayResult (result, inputText, output) {
+if (typeof(result) === "object" || typeof(result) === "function") result = result.toSource();
+let content = `
+<code><pre>
+${result}
+</pre></code>
+`;
+let titleText = `<kbd>${inputText}</kbd>`;
+let titleContainer = document.createElement ("h3");
+titleContainer.innerHTML = titleText;
+
+let container = document.createElement ("div");
+container.setAttribute ("id", `command-${history.length-1}`);
+container.setAttribute ("expression", inputText);
+container.setAttribute ("aria-live", "polite");
+
+output.appendChild (titleContainer);
+output.appendChild (container);
+
+// give DOM time to settle in order for live region to trigger
+setTimeout (() => container.innerHTML = content, 100);
+return container;
+} // displayResult
+
+/// history
+
+function historyIsEmpty () {
+return history.length === 0;
+} // historyIsEmpty
+
+function previousCommand () {
+if (historyIsEmpty()) return -1;
+if (commandIndex === 0) return;
+commandIndex -= 1;
+getCommand (commandIndex);
+} // previousCommand
+
+function nextCommand () {
+if (historyIsEmpty()) return -1;
+
+commandIndex += 1;
+if (commandIndex >= history.length) {
+clearInput ();
+commandIndex = history.length;
+return;
+} // if
+
+getCommand (commandIndex);
+} // nextCommand
+
+function getCommand (index) {
+if (index >= 0 && index < history.length) {
+input.value = history[index];
+console.log ("command: ", input.value);
+} // if
+} // getCommand
 
 </script>
 
