@@ -1,0 +1,41 @@
+<!doctype html>
+<html>
+<body>
+<div id="input">
+<label>js> <input type="text" class="text"></label>
+</div>
+
+<div id="output" aria-live="polite">
+<pre class="text"></pre>
+</div>
+
+<script>
+"use strict";
+let $ = document.querySelector.bind(document);
+let input = $("#input .text");
+let output = $("#output .text");
+
+input.addEventListener ("keyup", (e) => {
+if (e.key === "Enter") e.target.dispatchEvent(new CustomEvent("click", {bubbles: true}))
+});
+
+input.addEventListener ("click", (e) => {
+evaluate(e.target.value, output)
+input.value = "";
+});
+
+function evaluate (expression, output) {
+let result = new Function (`{
+"use strict";
+return (${expression});
+}`)
+();
+
+output.textContent = result;
+return result;
+} // evaluate
+
+</script>
+
+</body>
+</html>
