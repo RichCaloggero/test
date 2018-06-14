@@ -47,24 +47,31 @@ input.dispatchEvent (new CustomEvent("execute", {bubbles: true}));
 function executeCommand (expression, output) {
 history.push (expression);
 commandIndex = history.length;
+try {
 return displayResult (evaluate(expression), expression, output);
+} catch (e) {
+displayResult (e.message, expression, output);
+} // catch
 } // executeCommand
 
 function evaluate (expression) {
 return new Function (`{
 "use strict";
-try {
+//try {
 return ${expression};
-} catch (e) {
-return e;
-} // catch
+//} catch (e) {
+//return e;
+//} // catch
 }`)
 ();
 } // evaluate
 
-
-function displayResult (result, inputText, output) {
-if (typeof(result) === "object" || typeof(result) === "function") result = result.toSource();
+function displayResult (_result, inputText, output) {
+let result = _result;
+if (typeof(_result) === "object" || typeof(_result) === "function") {
+result = result.toSource();
+if (typeof(_result) === "object") result = result.replace (/\((.*)\)/, "$1");
+} // if
 let content = `
 <code><pre>
 ${result}
