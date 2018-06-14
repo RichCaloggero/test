@@ -1,0 +1,54 @@
+<!doctype html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+<title>Test</title>
+<style>
+#list1 {float: left;}
+#list2 {float: right;}
+</style>
+</head>
+<body>
+<div>
+<div id="list1">
+<label>
+occupation
+<br><select id="occupations">
+<option>--select--</option>
+<option>scientist</option>
+<option>engineer</option>
+</select></label>
+</div><div id="list2">
+<label>
+specialization
+<br><select id="specialization">
+</select></label>
+</div>
+</div>
+
+<script>
+let data = {
+engineer: ["electrical", "computer", "software", "materials", "mechanical", "civil"],
+scientist: ["physicist", "astronomer", "biologist", "chemist", "computer"]
+};
+
+let $ = document.querySelector.bind (document);
+let occupations = $("#occupations");
+let specialization = $("#specialization");
+
+occupations.addEventListener ("change", (e) => loadData(e.target.value, specialization));
+
+function loadData (key, list) {
+if (data[key]) {
+list.innerHTML = data[key].map (text => `<option>${text}</option>`)
+.join ("\n");
+
+} else {
+list.innerHTML = "<option>--select occupation--</option\n";
+} // if
+} // loadData
+
+</script>
+
+</body>
+</html>

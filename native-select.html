@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+<title>Test</title>
+</head>
+<body>
+<h1>Test</h1>
+
+<hr>
+<div>
+<pre id="message" aria-live="polite"></pre>
+</div>
+
+<div><label>select multiple options:
+<select multiple>
+<option>item one</option>
+<option>item two</option>
+<option>item three</option>
+</select>
+</label></div>
+
+<hr>
+<div>
+<h2>Keyboard controls</h2>
+
+<h3>Windows</h3>
+<ul>
+<li>up / down to select single option (change event firesimmediately)</li>
+<li>control+updown to move without selecting (change event does not fire)</li>
+<li>control+space to toggle current option (change event fires immediately)</li>
+</li></ul>
+
+<p>To get a string containing the text of all the selected elements, do something like the following in a "change" event handler (see code for more):
+<br>let t = Array.from(e.target.selectedOptions).map (e => e.textContent).join (", ");
+</p><p>
+Note that the value attribute only gives value of first selected element, regardless of the presence of the "multiple" option, so best to use "selectedOptions" and map over that collection to extract needed info.
+</p>
+</div>
+
+
+<script>
+let $ = document.querySelector.bind(document);
+
+$("select").addEventListener ("change", 
+(e) => {
+let s = e.target.selectedOptions;
+let t = Array.from(s).map (e => e.textContent).join (", ");
+message (`change: ${s.length} options selected:\n${t}\nvalue: ${e.target.value}`);
+}); // event listener
+
+function message (text) {
+$("#message").textContent = text;
+} // message
+
+</script>
+
+</body>
+</html>
