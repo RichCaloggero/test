@@ -5,16 +5,17 @@
 <title>JS-Eval</title>
 </head>
 <body>
-<div id="input">
+<div id="input" role="region" aria-label="Input">
 <label>js> <input autofocus type="text" class="text"></label>
 </div>
 
-<div id="output">
+<div id="output" role="region" aria-label="Output">
 </div>
 
 <script>
 "use strict";
 let $ = document.querySelector.bind(document);
+let $$ = document.querySelectorAll.bind(document);
 let input = $("#input .text");
 let output = $("#output");
 let history = [];
@@ -67,16 +68,19 @@ return ${expression};
 } // evaluate
 
 function displayResult (_result, inputText, output) {
+// clean up results of toSource()
 let result = _result;
 if (typeof(_result) === "object" || typeof(_result) === "function") {
 result = result.toSource();
 if (typeof(_result) === "object") result = result.replace (/\((.*)\)/, "$1");
 } // if
+
 let content = `
 <code><pre>
 ${result}
 </pre></code>
 `;
+
 let titleText = `<kbd>${inputText}</kbd>`;
 let titleContainer = document.createElement ("h3");
 titleContainer.innerHTML = titleText;
@@ -85,11 +89,12 @@ let container = document.createElement ("div");
 container.setAttribute ("id", `command-${history.length-1}`);
 container.setAttribute ("expression", inputText);
 container.setAttribute ("aria-live", "polite");
+container.classList.add("command");
 
 output.appendChild (titleContainer);
 output.appendChild (container);
 
-// give DOM time to settle in order for live region to trigger
+// give DOM time to settle in order for live region to trigger, before inserting content
 setTimeout (() => container.innerHTML = content, 100);
 return container;
 } // displayResult
@@ -104,7 +109,7 @@ function previousCommand () {
 if (historyIsEmpty()) return -1;
 if (commandIndex === 0) return;
 commandIndex -= 1;
-getCommand (commandIndex);
+displayHistoryEntry  (commandIndex);
 } // previousCommand
 
 function nextCommand () {
@@ -117,15 +122,20 @@ commandIndex = history.length;
 return;
 } // if
 
-getCommand (commandIndex);
+displayHistoryEntry  (commandIndex);
 } // nextCommand
 
-function getCommand (index) {
+function displayHistoryEntry (index) {
 if (index >= 0 && index < history.length) {
+let command = document.getElementById (`command-${index}`);
+$$("#output .command")
+.forEach (e => e.setAttribute ("tabIndex", "-1"));
+command.setAttribute ("tabindex", "0");
+
 input.value = history[index];
 console.log ("command: ", input.value);
 } // if
-} // getCommand
+} // displayHistoryEntry 
 
 </script>
 
