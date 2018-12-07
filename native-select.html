@@ -8,16 +8,15 @@
 <body>
 <h1>Test</h1>
 
-<hr>
+<p><a href="#">dummy link</a></p>
+
 <div>
 <pre id="message" aria-live="polite"></pre>
 </div>
+<hr>
 
 <div><label>select multiple options:
-<select multiple>
-<option>item one</option>
-<option>item two</option>
-<option>item three</option>
+<select id="department" multiple>
 </select>
 </label></div>
 
@@ -42,13 +41,34 @@ Note that the value attribute only gives value of first selected element, regard
 
 <script>
 let $ = document.querySelector.bind(document);
+let data = [
+{text: "all departments", count: 239},
+{text: "civil engineering", count: 7},
+{text: "mechanical engineering", count: 14},
+{text: "electrical engineering and computer science", count: 21},
+{text: "biology", count: 10},
+];
+populate ($("#department"), data);
 
-$("select").addEventListener ("change", 
+$("#department").addEventListener ("change", 
 (e) => {
-let s = e.target.selectedOptions;
-let t = Array.from(s).map (e => e.textContent).join (", ");
-message (`change: ${s.length} options selected:\n${t}\nvalue: ${e.target.value}`);
+let s = e.target;
+if (s.selectedOptions.length > 1 && s[0].selected) s[0].selected = false;
+let count = Array.from(s.selectedOptions).reduce ((count, option) => count += Number(option.value), 0);
+setTimeout (() => message (`${count} exams found.`), 170);
 }); // event listener
+
+function populate (list, data) {
+data.map (d => {
+let option = document.createElement ("option");
+option.setAttribute ("value", d.count);
+option.textContent = d.text;
+list.add (option);
+});
+
+//list[0].selected = true;
+//list[0].dispatchEvent (new CustomEvent("click", {bubbles: true}));
+} // populate
 
 function message (text) {
 $("#message").textContent = text;
