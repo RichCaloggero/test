@@ -11,12 +11,12 @@
 <script>
 a=document.createElement("video");
 a.setAttribute("crossorigin", true);
-a.setAttribute("controls", true);
+//a.setAttribute("controls", true);
 document.body.appendChild(a);
 c = new AudioContext();
 s=c.createMediaElementSource(a);
 s.connect(c.destination);
-document.querySelector("input").value = "./t1.mp3";
+document.querySelector("input").value = "./t.wav";
 
 document.querySelector("#play").addEventListener("click", () => {
 a.src = document.querySelector("input").value;
