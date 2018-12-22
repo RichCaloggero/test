@@ -1,0 +1,56 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>test</title>
+</head>
+<body>
+<h1>Test</h1>
+<div>
+<fieldset>
+<legend><h2>light dom</h2></legend>
+<t-test></t-test>
+</fieldset>
+
+<fielset>
+<legend><h2>shadow dom</h2></legend>
+<t-test shadow></t-test>
+</fieldset>
+</div>
+
+<script>
+class T extends HTMLElement {
+
+constructor () {
+super ();
+} // constructor
+
+connectedCallback () {
+const dom = this.hasAttribute("shadow")? this.attachShadow({mode: "open"})
+: this;
+dom.innerHTML = _template.call(this);
+} // connectedCallback
+} // class T
+
+
+customElements.define("t-test", T);
+
+function _template () {
+return `
+<fieldset class="t-test">
+<legend><h3>t-test</h3></legend>
+<label>Select something:
+<br><select id="mySelector">
+<option value="0">something</option>
+<option value="1">something else</option>
+<option value="2">nothing</option>
+</select></label>
+</fieldset>
+`; // html
+} // _template
+
+
+</script>
+
+</body>
+</html>
