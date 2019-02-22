@@ -1,0 +1,37 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Test</title>
+</head>
+<body>
+<div class="transcript"><p>
+<span>phrase 1</span>
+<span tabindex="0">phrase 2</span>
+<span tabindex="-1">phrase 3</span>
+<span>phrase 4</span>
+</p><p>
+<span>phrase 5</span>
+<span tabindex="0">phrase 6</span>
+<span tabindex="-1">phrase 7</span>
+<span>phrase 8</span>
+
+</div>
+
+<script>
+const transcript = document.querySelector(".transcript");
+const phrases = Array.from(document.querySelectorAll(".transcript p > span"));
+phrases.forEach(x => x.setAttribute("tabindex", "-1"));
+
+transcript.addEventListener("keyup", e => {
+if (e.key === "Enter") {e.preventDefault(); e.target.click();}
+});
+transcript.addEventListener("click", e => {
+alert(`clicked: ${e.target.textContent}`);
+});
+
+</script>
+
+
+</body>
+</html>

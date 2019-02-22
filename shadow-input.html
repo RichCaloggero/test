@@ -15,8 +15,6 @@
 let t1count = 0, t2count = 0, t3count = 0;
 
 class T1 extends HTMLElement {
-static get template () {return _template();}
-
 constructor () {
 super ();
 t1count += 1;
@@ -24,7 +22,6 @@ this.level = 1;
 this.id = `t1-${t1count}`;
 } // constructor
 
-//_attachDom (dom) {this.appendChild(dom);}
 connectedCallback () {
 const dom = this.attachShadow({mode: "open"});
 dom.innerHTML = _template.call(this);
@@ -32,8 +29,6 @@ dom.innerHTML = _template.call(this);
 } // class T1
 
 class T2 extends HTMLElement {
-static get template () {return _template();}
-
 constructor () {
 super ();
 t2count += 1;
@@ -41,7 +36,6 @@ this.level = 2;
 this.id = `t2-${t2count}`;
 } // constructor
 
-//_attachDom (dom) {this.appendChild(dom);}
 connectedCallback () {
 const dom = this.attachShadow({mode: "open"});
 dom.innerHTML = _template.call(this);
@@ -49,8 +43,6 @@ dom.innerHTML = _template.call(this);
 } // class T2
 
 class T3 extends HTMLElement {
-static get template () {return _template();}
-
 constructor () {
 super ();
 t3count += 1;
@@ -58,7 +50,6 @@ this.level = 3;
 this.id = `t3-${t3count}`;
 } // constructor
 
-//_attachDom (dom) {this.appendChild(dom);}
 connectedCallback () {
 const dom = this.attachShadow({mode: "open"});
 dom.innerHTML = _template.call(this);
