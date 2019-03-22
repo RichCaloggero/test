@@ -1,0 +1,56 @@
+* {
+    font-family: sans-serif;
+}
+
+.caps {
+    text-transform: uppercase;
+}
+
+li {
+    margin-bottom: 1rem;
+}
+
+.relative {
+    position: relative;
+    height: 3.6rem;
+}
+
+.absolute {
+    position: absolute;
+}
+
+.inline-block {
+    display: inline-block;
+}
+
+.answerContainer {
+    line-height: 150%;
+}
+
+.blankspace {
+    display: inline-block;
+    height: 1.6rem;
+    vertical-align: top;
+    width: 7rem;
+}
+
+.blankspace-input {
+    width: 6rem;
+}
+
+.hide {
+    display: none !important;
+}
+
+.sronly {
+    position: absolute !important;
+    clip: rect(1px 1px 1px 1px) !important;
+    clip: rect(1px, 1px, 1px, 1px) !important;
+    clip-path: inset(50%) !important;
+    padding: 0 !important;
+    border: 0 !important;
+    height: 1px !important;
+    width: 1px !important;
+    overflow: hidden !important;
+    white-space: nowrap !important;
+}

@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Form fields with custom labeling</title>
+    <link rel="stylesheet" href="main.css">
+</head>
+
+<body>
+    <h1>Form fields with custom labeling</h1>
+    <h2>Simple examples</h2>
+    <p><strong>Note:</strong> You could potentially use a fieldset/legend structure here instead of a heading, but I'm
+        using headings instead for simplicity.</p>
+    <p>Each input field has aria-labelledby set, referencing the IDs of:</p>
+    <ul>
+        <li>The text preceding it,</li>
+        <li>A hidden (display:none) div element, with its inner text reading "blank," near the end of the DOM
+            (aria-labelledby can reference hidden content under certain circumstances, which is by design), and</li>
+        <li>The text following it.</li>
+    </ul>
+    <p>Note that <strong>all IDs on the page must be unique.</strong></p>
+    <p>Also note that the first option in the &lt;select&gt; element below is an actual value. The reason is that
+        blank values in selects can cause undesirable behavior in some screen readers.</p>
+    <p><strong>Update 3/21: </strong>Question 3 in this section references a "blank" element nested in the middle of
+        the sentence, rather than a global one. The inner text of this changes depending on what the user has typed
+        into the input field. If the user erases their input, the inner text goes back to being "blank"</p>
+    <ol>
+        <li><span id="preceding_01">The </span><input type="text" aria-labelledby="preceding_01 blank following_01"><span
+                id="following_01"> has a greater average
+                weight</span></li>
+        <li><span id="preceding_02">A </span>
+            <select aria-labelledby="preceding_02 blank following_02">
+                <option value="selectsomething">Select from the options below</option>
+                <option value="jeep">Jeep</option>
+                <option value="elephant">Shuttlecraft</option>
+                <option value="pteranodon">Pteranodon</option>
+            </select>
+            <span id="following_02"> is a highly-efficient mode of transportation.</span>
+        </li>
+        <li>
+            <span id="preceding_03">A </span><span id="blank_03" class="sronly mid-blank">blank</span>
+            <input type="text" aria-labelledby="preceding_03 blank_03 following_03" data-blank="blank_03">
+            <span id="following_03"> is not a highly-efficient mode of transportation.</span>
+        </li>
+    </ol>
+
+    <!-- Hidden div containing the word 'blank.' Aria-labelledby can reference this despite it being hidden. (note that this may not work if you nest the text within *another* element inside the .hide div.) -->
+    <!-- You can use this single element to cover all cases where the word "blank" is needed. -->
+    <div class="hide" id="blank">blank</div>
+    <hr aria-hidden="true">
+    <h2>Hackier/more complex examples</h2>
+    <h3>Using absolute positioning to modify the visual order</h3>
+    <p>This example has a sentence that contains the word "blank" as screen reader-only text. The input field or select
+        is placed visually over top of the "blank" area, and is labeled in such a way to make it read "Enter [select]
+        answer for: [question]."</p>
+    <p>I used JavaScript to dynamically place each answer field over the blank spot, but this is probably breakable.
+        One major issue (at least with what I was able to code) was that any field/select that isn't on the first line
+        of text in the question doesn't get positioned correctly.</p>
+    <p>These double-speak in NVDA when using browse mode/jumping between list items.</p>
+    <p>In this case, I had to take the question out of a list structure because the list numbers/bullets were getting
+        styled as though they were an entire line above the question, which is something I don't have the CSS skills to
+        fix. I used the ARIA list/listitem roles to provide a semantic list structure.</p>
+
+    <div role="list">
+
+        <div role="listitem" class="relative hasinput answerContainer">
+            <div id="complex_01" class="absolute">1. The <span class="blankspace"><span class="sronly">blank</span></span>
+                seen above Los Angeles in
+                March 2019 went viral on Twitter.</div>
+            <input id="complex_01_field" type="text" class="absolute blankspace-input" aria-label="Enter answer for this question"
+                aria-labelledby="complex_01 complex_01_field">
+        </div>
+        <div role="listitem" class="relative hasinput answerContainer">
+            <div id="complex_02" class="absolute">2. The thing seen above Los Angeles in
+                March 2019 that went viral on Twitter also was <span class="blankspace"><span class="sronly">blank</span></span>
+                on Instagram.</div>
+            <select id="complex_02_field" class="absolute blankspace-input" aria-label="Select answer for this question"
+                aria-labelledby="complex_02 complex_02_field">
+                <option value="selectSomething">select from the options below</option>
+                <option value="shown">shown</option>
+                <option value="freaking-people-out">freaking people out</option>
+                <option value="not">not</option>
+            </select>
+        </div>
+
+    </div>
+    <h3>Adding buttons to speak the answer</h3>
+    <p>These are constructed like the ones shown under "Simple examples," but include a button after each one to read
+        out the user's computed answer.</p>
+    <p>The first example here utilizes an aria-live region that is screen reader-only and located at the bottom of the
+        DOM. The region is present, but empty, on page load. When the user activates the "speak" button, the computed
+        answer is appended into the live region, then removed after 10 seconds. This is probably not a great solution,
+        though, because it will only work for screen reader users.</p>
+    <p>The second example uses the speech synthesis API, which will not work in IE11, and might interupt a screen
+        reader.</p>
+    <ol>
+        <li>
+            <div class="inline-block"><span id="preceding_04">A </span>
+                <input id="speaking-question" type="text" aria-labelledby="preceding_04 blank following_04">
+                <span id="following_04"> is not a highly-efficient mode of transportation.</span></div>
+            <div class="inline-block speakQuestion"><button data-ipt="speaking-question" data-live="liveReg">Speak
+                    entered value for question 1</button></div>
+            <span id="liveReg" class="sronly" aria-live="polite"></span>
+        </li>
+        <li>
+            <div class="inline-block"><span id="preceding_05">A </span>
+                <input id="speaking-question-speech" type="text" aria-labelledby="preceding_05 blank following_05">
+                <span id="following_05"> is not a highly-efficient mode of transportation.</span></div>
+            <div class="inline-block speech"><button data-ipt="speaking-question-speech">Speak
+                    entered value for question 2</button></div>
+        </li>
+    </ol>
+
+    <p>(Disclaimer: I built this example on my spare time, to provide
+        assistance in solving an interesting accessibility problem. This should not be seen as legal advice, or as
+        official guidance from any accessibility company or other entity.)</p>
+    <script src="main.js"></script>
+</body>
+
+</html>
