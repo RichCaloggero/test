@@ -8,8 +8,10 @@ nav ul {list-style-type: none;}
 </style>
 </head>
 <body>
+<div id="message" aria-live="polite"></div>
+
 <nav>
-<ul><li>1.1
+<ul id="top"><li>1.1
 </li><li>
 1.2
 <ul hidden><li>
@@ -30,9 +32,29 @@ nav ul {list-style-type: none;}
 </li></ul>
 </li></ul>
 </nav>
+<p><a href="#">--end--</a></p>
+
 
 <script>
-makeLinks (document.querySelector("nav"));
+const nav = document.querySelector("nav");
+let lastFocus = null;
+makeLinks (nav)
+nav.addEventListener("focusin", focusIn);
+nav.addEventListener("focusout", focusOut);
+
+function focusIn (e) {
+const next = e.target.nextElementSibling;
+//message(`${e.target.nodeName}, ${next.nodeName}`);
+if (next && next.matches("ul")) next.removeAttribute("hidden");
+} // focusIn
+
+function focusOut (e) {
+lastFocus = e.target.parentElement;
+} // focusOut
+
+function message (text) {
+document.querySelector("#message").textContent = `${text}\n`;
+} // message
 
 function makeLinks (nav) {
 Array.from(nav.querySelectorAll("li")).forEach (li => {
@@ -41,6 +63,7 @@ makeLink(li.firstChild.textContent),
 li.firstChild
 );
 });
+return nav;
 
 
 function makeLink (text) {
