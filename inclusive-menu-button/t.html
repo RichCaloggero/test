@@ -1,0 +1,68 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Menu Test</title>
+<link rel="stylesheet" href="inclusive-menu-button.css">
+</head>
+<body>
+<h1>Menu Test</h1>
+
+<nav data-inclusive-menu>
+<button data-inclusive-menu-opens="read">
+read
+   <span aria-hidden="true">&#x25be;</span>
+</button>
+<div data-inclusive-menu-from="left" id="read">
+<button>Startup Features</button>
+<button>News</button>
+</div>
+
+<button>WATCH</button>
+
+<button data-inclusive-menu-opens="attend">
+ATTEND
+   <span aria-hidden="true">&#x25be;</span>
+</button>
+<div data-inclusive-menu-from="left" id="attend">
+<button>Workshops</button>
+<button>Showcases</button>
+<button>Conferences</button>
+</div>
+
+<button data-inclusive-menu-opens="about">
+ABOUT
+   <span aria-hidden="true">&#x25be;</span>
+</button>
+<div data-inclusive-menu-from="left" id="about">
+<button>Staff</button>
+</div>
+
+<button data-inclusive-menu-opens="startups">
+STARTUPS
+   <span aria-hidden="true">&#x25be;</span>
+</button>
+<div data-inclusive-menu-from="left" id="startups">
+<button>STEX25</button>
+<button>Search startups</button>
+<button>Search opportunities</button>
+<button>Search founders</button>
+</div>
+</nav>
+
+<script src="inclusive-menu-button.min.js"></script>
+<script>
+      // Instantiation
+      const menuButtons = document.querySelectorAll('[data-inclusive-menu-opens]');
+
+Array.from(menuButtons).forEach(button => {
+const menuButton = new MenuButton(button);
+
+      // Listen to choose event
+      menuButton.on("choose", choice => {
+        alert(`You chose "${choice.textContent}"`);
+      });
+    }); // forEach
+</script>
+</body>
+</html>
