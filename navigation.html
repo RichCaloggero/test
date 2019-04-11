@@ -4,17 +4,32 @@
 <meta charset="utf-8">
 <title>Navigation Test</title>
 <style>
-nav ul {list-style-type: none;}
+nav ul {list-style-type: none; display: block;}
+.hide-display {display: none;}
+.hide-offScreen {
+position: absolute !important;
+width: 1px; height: 1px;
+left: -9999; top: -9999;
+}
+.hide-opacity: {opacity: 0;}
+
+.hide-clip {
+clip(1, 1);
+clip (1 1);
+}
 </style>
 </head>
 <body>
 <div id="message" aria-live="polite"></div>
+<div id="options">
+<label>hiding method: <select id="methodSelector"></select></label>
+</div>
 
 <nav>
 <ul id="top"><li>1.1
 </li><li>
 1.2
-<ul hidden><li>
+<ul><li>
 2.1
 </li><li>
 2.2
@@ -23,7 +38,7 @@ nav ul {list-style-type: none;}
 </li></ul>
 </li><li>
 1.3
-<ul hidden><li>
+<ul><li>
 3.1
 </li><li>
 3.2
@@ -36,27 +51,82 @@ nav ul {list-style-type: none;}
 
 
 <script>
+const hidingMethods = [
+{method: "hide-display", description: "hide via display:none"},
+{method: "hide-clip", description: "hide via CSS clip"},
+{method: "hide-offScreen", description: "hide off screen"},
+{method: "hide-opacity", description: "hide via opacity:0"}
+];
+const methodSelector = initializeMethodSelector(hidingMethods, document.querySelector("#methodSelector"));
+hideAll();
+
 const nav = document.querySelector("nav");
-let lastFocus = null;
+const originalHtml = nav.innerHTML;
 makeLinks (nav)
-nav.addEventListener("focusin", focusIn);
-nav.addEventListener("focusout", focusOut);
+
+document.body.addEventListener("focusin", focusIn);
+document.body.addEventListener("focusout", focusOut);
+methodSelector.addEventListener ("change", hideAll);
 
 function focusIn (e) {
+//message(`focus in: ${e.target.textContent}`);
+if (!nav.contains(e.target)) {
+hideAll();
+//message(`outside nav - hiding all`);
+return;
+} // if
+
 const next = e.target.nextElementSibling;
+if (!next) return;
 //message(`${e.target.nodeName}, ${next.nodeName}`);
-if (next && next.matches("ul")) next.removeAttribute("hidden");
+if (next && next.matches("ul")) show(next);
 } // focusIn
 
 function focusOut (e) {
 if (!e.target || !e.relatedTarget) return;
-const leavingMenu = e.target.closest("ul");
-const enteringMenu =  e.relatedTarget.closest("ul");
-if (!leavingMenu || !enteringMenu) return;
+const leavingMenu = closestMenu(e.target);
+const enteringMenu =  closestMenu(e.relatedTarget);
+if (!leavingMenu || !enteringMenu || leavingMenu.id === "top") return;
 const closeMenu = leavingMenu !== enteringMenu && !leavingMenu.contains(enteringMenu);
 //message (`out: ${closeMenu}, ${e.target.textContent}, ${e.target.parentElement.nodeName}, ${e.relatedTarget.textContent}, ${e.relatedTarget.parentElement.nodeName}`);
-if (closeMenu) leavingMenu.setAttribute("hidden", true);
+if (closeMenu) hide(leavingMenu);
 } // focusOut
+
+function hideAll () {
+const subnav = document.querySelectorAll("nav #top ul");
+Array.from(subnav).forEach(x => {
+x.class = "";
+hide(x);
+});
+} // hideAll
+
+function hide (x) {
+const method = hidingMethods[methodSelector.selectedIndex].method;
+console.log(`hide via ${method}`);
+x.classList.add(method);
+} // hide
+
+function show (x) {
+const method = hidingMethods[methodSelector.selectedIndex].method;
+console.log(`show via ${method}`);
+x.classList.remove(method);
+} // show
+
+function closestMenu (node) {
+node.closest("ul");
+} // closestMenu
+
+
+function initializeMethodSelector (methods, methodSelector) {
+methods.forEach(method => {
+const option = document.createElement("option");
+option.value = method.method;
+option.textContent = method.description;
+methodSelector.add(option);
+}); // forEach
+
+return methodSelector;
+} // initializeMethodSelector
 
 function message (text) {
 document.querySelector("#message").textContent = `${text}\n`;
