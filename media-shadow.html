@@ -8,42 +8,16 @@
 <h1>Test</h1>
 
 <t-1>
-<t-2></t-2>
 </t-1>
 
 <script type="module">
 let t1count = 0;
-let t2count = 0;
 
 class T1 extends HTMLElement {
 get template () {
 return `
-<div class="${this.id}">
-<h2>${this.id}</h2>
-</div>
-
-<slot></slot>
-`;
-} // get template
-
-constructor () {
-super ();
-t1count += 1;
-this.id = `t-1-${t1count}`;
-this.audio = new AudioContext();
-} // constructor
-
-connectedCallback () {
-createDom.call(this);
-console.log(`${this.id} connected`);
-} // connectedCallback
-} // class T1
-
-class T2 extends T1 {
-get template () {
-return `
 <fieldset class="${this.id}">
-<legend><h3>${this.id}</h3></legend>
+<legend><h2>${this.id}</h2></legend>
 <button id="play">Play</button>
 </fieldset>
 `;
@@ -51,13 +25,14 @@ return `
 
 constructor () {
 super();
-t2count += 1;
-this.id = `t-2-${t2count}`;
+t1count += 1;
+this.id = `t-1-${t1count}`;
 
+this.audio = new AudioContext();
 this.audioElement = document.createElement("audio");
 this.audioSource = this.audio.createMediaElementSource(this.audioElement);
 this.audioSource.connect(this.audio.destination);
-this.audioElement.src = "./t1.mp3";
+this.audioElement.src = "./boom.mp3";
 } // constructor
 
 connectedCallback () {
@@ -77,27 +52,16 @@ e.target.textContent = "play";
 
 e.target.focus();
 } // play
-} // class T2
+} // class T1
+
 
 customElements.define("t-1", T1);
-customElements.define("t-2", T2);
 
 
 function createDom () {
 const root = this.attachShadow({mode: "open"});
 root.innerHTML = this.template;
 } // createDom
-
-function _template (element, level) {
-return `
-<div class="${element.id}">
-<h${level}>${element.id}</h${level}>
-<div class="message" aria-live="polite"></div>
-</div>
-
-${(level < 4)? "<slot></slot>" : ""}
-`;
-} // _template
 
 </script>
 

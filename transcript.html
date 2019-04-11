@@ -21,7 +21,7 @@
 <script>
 const transcript = document.querySelector(".transcript");
 const phrases = Array.from(document.querySelectorAll(".transcript p > span"));
-phrases.forEach(x => x.setAttribute("tabindex", "-1"));
+phrases.forEach(x => x.setAttribute("tabindex", "0"));
 
 transcript.addEventListener("keyup", e => {
 if (e.key === "Enter") {e.preventDefault(); e.target.click();}

@@ -49,7 +49,13 @@ if (next && next.matches("ul")) next.removeAttribute("hidden");
 } // focusIn
 
 function focusOut (e) {
-lastFocus = e.target.parentElement;
+if (!e.target || !e.relatedTarget) return;
+const leavingMenu = e.target.closest("ul");
+const enteringMenu =  e.relatedTarget.closest("ul");
+if (!leavingMenu || !enteringMenu) return;
+const closeMenu = leavingMenu !== enteringMenu && !leavingMenu.contains(enteringMenu);
+//message (`out: ${closeMenu}, ${e.target.textContent}, ${e.target.parentElement.nodeName}, ${e.relatedTarget.textContent}, ${e.relatedTarget.parentElement.nodeName}`);
+if (closeMenu) leavingMenu.setAttribute("hidden", true);
 } // focusOut
 
 function message (text) {
