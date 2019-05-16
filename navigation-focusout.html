@@ -48,9 +48,9 @@ list-style-type: none;
 <div id="message" role="log"></div>
 
 <script>
-const focusInDelay = 70;
 hideAll();
-document.body.addEventListener("focusin", e => setTimeout(() => focusIn(e), focusInDelay));
+document.body.addEventListener("focusin", focusIn);
+document.body.addEventListener("focusout", focusOut);
 
 function focusIn (e) {
 if (!e.target) return;
@@ -64,15 +64,29 @@ return;
 } // if
 
 const menu = menuElement(label);
-if (menu && isHidden(menu)) show(menu);
-label.focus();
+if (menu && menu.hasAttribute("hidden")) show(menu);
 } // focusIn
+
+function focusOut (e) {
+setTimeout(() => {
+// e.target is label of menu losing focus
+// e.relatedTarget is label of menu gaining focus
+if (!e.target || !e.relatedTarget) return;
+const leaving = closestMenu(e.target);
+const entering = closestMenu(e.relatedTarget);
+if (!leaving || !entering || leaving === entering) return;
+//message(`focusOut: ${leaving.id}, ${entering.id}`);
+
+if (leaving.contains(entering)) show(entering);
+if (entering.contains(leaving)) hide(leaving);
+}, 0);
+} // focusOut
 
 function hideAll () {
 collapsibleMenus()
 .forEach(menu => {
 menu.setAttribute("hidden", true);
-menuLabel(menu).setAttribute("aria-expanded", "false");
+//menuLabel(menu).setAttribute("aria-expanded", "false");
 });
 } // hideAll
 
@@ -82,13 +96,13 @@ return Array.from(topMenu().querySelectorAll("ul"));
 
 function hide (menu) {
 menu.setAttribute("hidden", true);
-menuLabel(menu).setAttribute("aria-expanded", "false");
+//menuLabel(menu).setAttribute("aria-expanded", "false");
 } // hide
 
 function show (menu) {
-hideAll();
+//hideAll();
 menu.removeAttribute("hidden");
-menuLabel(menu).setAttribute("aria-expanded", "true");
+//menuLabel(menu).setAttribute("aria-expanded", "true");
 } // show
 
 function closestMenu (node) {
@@ -111,18 +125,14 @@ if (!label) return null;
 return label.nextElementSibling;
 } // menuElement
 
-function isHidden (menu) {return menu.hasAttribute("hidden");}
-function isShowing (menu) {return !isHidden(menu);}
 
 function message (text) {
 const mess = document.querySelector("#message");
-mess.innerHTML = `<p>${text}</p>`;
-setTimeout(() => clearMessages(), 2000);
+mess.textContent = `${text}\n`;
+setTimeout(() => mess.textContent = "", 2000);
 } // message
 
-function clearMessages () {
-document.querySelector("#message").innerHTML = "";
-} // clearMessages
+
 
 </script>
 
