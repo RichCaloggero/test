@@ -4,8 +4,14 @@
 <meta charset="utf-8">
 <title>Navigation Test</title>
 <style>
+nav {position: relative;}
+/*nav > ul > li {margin: 2em; display: inline;}*/
+/*nav ul ul li {display: block;}*/
 nav ul {
+opacity: 1;
 list-style-type: none;
+}
+.hidden {opacity: 0;}
 </style>
 </head>
 <body>
@@ -50,28 +56,47 @@ list-style-type: none;
 <script>
 const focusInDelay = 70;
 hideAll();
-document.body.addEventListener("focusin", e => setTimeout(() => focusIn(e), focusInDelay));
-
-function focusIn (e) {
-if (!e.target) return;
-const label = e.target;
 
 // handles case where focus moves outside the nav
-if (!topMenu().contains(label)) {
+document.body.addEventListener ("focusin", e => {
+if (!topMenu().contains(e.target)) {
 hideAll();
 message(`outside nav - hiding all`);
 return;
 } // if
+}); // focus outside nav
 
+
+
+topMenu().addEventListener("focusin", e => {
+//setTimeout(() => {
+focusIn(e);
+//}, focusInDelay);
+}); // cfocusin
+
+function focusIn (e) {
+message("focus in");
+if (!e.target) return;
+
+const label = e.target;
 const menu = menuElement(label);
+const parentMenu = closestMenu(label);
+message(`selecting ${menu} with parent ${parentMenu.id}`);
+
+if (parentMenu === topMenu()) {
+message("top.");
 if (menu && isHidden(menu)) show(menu);
+} else {
+message("sub menu.");
+if (isHidden(parentMenu)) show(parentMenu);
+} // if
 label.focus();
 } // focusIn
 
 function hideAll () {
 collapsibleMenus()
 .forEach(menu => {
-menu.setAttribute("hidden", true);
+menu.classList.add("hidden");
 menuLabel(menu).setAttribute("aria-expanded", "false");
 });
 } // hideAll
@@ -80,23 +105,14 @@ function collapsibleMenus () {
 return Array.from(topMenu().querySelectorAll("ul"));
 } // collapsibleMenus
 
-function hide (menu) {
-menu.setAttribute("hidden", true);
-menuLabel(menu).setAttribute("aria-expanded", "false");
-} // hide
-
-function show (menu) {
-hideAll();
-menu.removeAttribute("hidden");
-menuLabel(menu).setAttribute("aria-expanded", "true");
-} // show
 
 function closestMenu (node) {
-return node.closest("ul");
+if (!node) return null;
+return node.parentElement? node.parentElement.closest("ul") : null;
 } // closestMenu
 
 function topMenu () {
-return document.querySelector("nav ul");
+return document.querySelector("nav > ul");
 } // top
 
 function menuLabel (menu) {
@@ -111,11 +127,25 @@ if (!label) return null;
 return label.nextElementSibling;
 } // menuElement
 
-function isHidden (menu) {return menu.hasAttribute("hidden");}
+function hide (menu) {
+menu.classList.add("hidden", true);
+menuLabel(menu).setAttribute("aria-expanded", "false");
+} // hide
+
+function show (menu) {
+hideAll();
+menu.classList.remove("hidden");
+menuLabel(menu).setAttribute("aria-expanded", "true");
+} // show
+
+function isHidden (menu) {return menu.classList.contains("hidden");}
 function isShowing (menu) {return !isHidden(menu);}
 
 function message (text) {
 const mess = document.querySelector("#message");
+const p = document.createElement("p");
+p.textContent = text;
+//mess.appendChild(p)
 mess.innerHTML = `<p>${text}</p>`;
 setTimeout(() => clearMessages(), 2000);
 } // message
