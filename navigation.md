@@ -85,7 +85,7 @@ label.focus();
 
 ### See full working example here:
 
-- runnable: https://RichCaloggero/github.io/test/navigation.html
+- runnable: https://RichCaloggero.github.io/test/navigation.html
 - source: https://github.com/RichCaloggero/test/blob/master/navigation.html
 
 
