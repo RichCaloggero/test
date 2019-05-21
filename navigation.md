@@ -57,29 +57,23 @@ return;
 } // if
 }); // focus outside nav
 
-topMenu().addEventListener("focusin", e => {
-//setTimeout(() => {
-focusIn(e);
-//}, focusInDelay);
-}); // cfocusin
+
+
+topMenu().addEventListener("focusin", focusIn); // cfocusin
 
 function focusIn (e) {
-message("focus in");
 if (!e.target) return;
 
 const label = e.target;
 const menu = menuElement(label);
 const parentMenu = closestMenu(label);
-message(`selecting ${menu} with parent ${parentMenu.id}`);
 
 if (parentMenu === topMenu()) {
-message("top.");
 if (menu && isHidden(menu)) show(menu);
+
 } else {
-message("sub menu.");
 if (isHidden(parentMenu)) show(parentMenu);
 } // if
-label.focus();
 } // focusIn
 ```
 

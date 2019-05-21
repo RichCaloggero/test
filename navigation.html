@@ -18,9 +18,9 @@ list-style-type: none;
 <h1 tabindex="0">Navigation Test</h1>
 
 
-<nav><ul id="top"><li>
-<a href="#">top 1</a>
-<ul id="menu1"><li>
+<nav><ul class="menu"><li>
+<h2><a class="label" href="#">top 1</a></h2>
+<ul class="collapseible menu"><li>
 <a href="#">item 1.1</a>
 </li><li>
 <a href="#">item 1.2</a>
@@ -29,8 +29,8 @@ list-style-type: none;
 </li></ul>
 
 </li><li>
-<a href="#">top 2</a>
-<ul id="menu2"><li>
+<h2><a class="label" href="#">top 2</a></h2>
+<ul class="collapseible menu"><li>
 <a href="#">item 2.1</a>
 </li><li>
 <a href="#">item 2.2</a>
@@ -39,8 +39,8 @@ list-style-type: none;
 </li></ul>
 
 </li><li>
-<a href="#">top 3</a>
-<ul id="menu3"><li>
+<h2><a class="label" href="#">top 3</a></h2>
+<ul class="collapseible menu"><li>
 <a href="#">item 3.1</a>
 </li><li>
 <a href="#">item 3.2</a>
@@ -54,7 +54,6 @@ list-style-type: none;
 <div id="message" role="log"></div>
 
 <script>
-const focusInDelay = 70;
 hideAll();
 
 // handles case where focus moves outside the nav
@@ -68,74 +67,63 @@ return;
 
 
 
-topMenu().addEventListener("focusin", e => {
-//setTimeout(() => {
-focusIn(e);
-//}, focusInDelay);
-}); // cfocusin
+topMenu().addEventListener("focusin", focusIn); // cfocusin
 
 function focusIn (e) {
-message("focus in");
 if (!e.target) return;
 
 const label = e.target;
 const menu = menuElement(label);
 const parentMenu = closestMenu(label);
-message(`selecting ${menu} with parent ${parentMenu.id}`);
 
 if (parentMenu === topMenu()) {
-message("top.");
 if (menu && isHidden(menu)) show(menu);
+
 } else {
-message("sub menu.");
 if (isHidden(parentMenu)) show(parentMenu);
 } // if
-label.focus();
 } // focusIn
 
 function hideAll () {
 collapsibleMenus()
 .forEach(menu => {
 menu.classList.add("hidden");
-menuLabel(menu).setAttribute("aria-expanded", "false");
 });
 } // hideAll
 
 function collapsibleMenus () {
-return Array.from(topMenu().querySelectorAll("ul"));
+return Array.from(topMenu().querySelectorAll(".collapseible"));
 } // collapsibleMenus
 
 
 function closestMenu (node) {
 if (!node) return null;
-return node.parentElement? node.parentElement.closest("ul") : null;
+return node.parentElement? node.parentElement.closest(".menu") : null;
 } // closestMenu
 
 function topMenu () {
-return document.querySelector("nav > ul");
+return document.querySelector("nav > .menu");
 } // top
 
 function menuLabel (menu) {
 if (!menu || menu === topMenu()) return null;
-//return menu.closest("li").querySelector("a");
-return menu.previousElementSibling;
+return menu.closest("li").querySelector(".label");
+//return menu.previousElementSibling;
 } // menuLabel
 
 function menuElement (label) {
 if (!label) return null;
-//return label.closest("li").querySelector("ul");
-return label.nextElementSibling;
+return label.closest("li").querySelector(".collapseible");
+//return label.nextElementSibling;
 } // menuElement
 
 function hide (menu) {
 menu.classList.add("hidden", true);
-menuLabel(menu).setAttribute("aria-expanded", "false");
 } // hide
 
 function show (menu) {
 hideAll();
 menu.classList.remove("hidden");
-menuLabel(menu).setAttribute("aria-expanded", "true");
 } // show
 
 function isHidden (menu) {return menu.classList.contains("hidden");}
