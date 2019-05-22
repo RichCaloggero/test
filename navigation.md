@@ -29,16 +29,36 @@ If deciding to go this route, then:
 ### HTML
 
 ```
-<nav aria-label="site wide">
-<ul><li>
-<h2><a href="research.html">Research</a></h2>
-<ul><li>...sub menu...</li></ul>
+<nav><ul class="menu"><li>
+<h2><a class="label" href="#">top 1</a></h2>
+<ul class="collapseible menu"><li>
+<a href="#">item 1.1</a>
 </li><li>
-<h2><a href="about.html">About</a></h2>
-<ul><li>...sub menu...</li></ul>
+<a href="#">item 1.2</a>
 </li><li>
-<h2><a href="tools.html">Tools</a></h2>
-<ul><li>...sub menu...</li></ul>
+<a href="#">item 1.3</a>
+</li></ul>
+
+</li><li>
+<h2><a class="label" href="#">top 2</a></h2>
+<ul class="collapseible menu"><li>
+<a href="#">item 2.1</a>
+</li><li>
+<a href="#">item 2.2</a>
+</li><li>
+<a href="#">item 2.3</a>
+</li></ul>
+
+</li><li>
+<h2><a class="label" href="#">top 3</a></h2>
+<ul class="collapseible menu"><li>
+<a href="#">item 3.1</a>
+</li><li>
+<a href="#">item 3.2</a>
+</li><li>
+<a href="#">item 3.3</a>
+</li></ul>
+
 </li></ul>
 </nav>
 ```
