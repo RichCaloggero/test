@@ -115,16 +115,16 @@ This example uses an outer list, and the collapseibles are simple divs.
 
 This is slightly less verbose (screen reader doesn't have to announce each list as it is entered, and doesn't need to continuously announce item counts, etc). However, the downside of this implementation is that what one gains in conciseness, is IMO a loss of clarity. In the examples below, the outer list items are wrapped in headings, so what the screen reader user sees would be something like this:
 
->heading level 2, top 1
-item 1.1
-item 1.2
-...
-heading level 2, top 2
-item 2.1
-item 2.2
-...
+>heading level 2, top 1<br>
+item 1.1<br>
+item 1.2<br>
+...<br>
+heading level 2, top 2<br>
+item 2.1<br>
+item 2.2<br>
+...<br>
 
-Basically, a lequence of links separated by headings, which is fairly clear, and slightly less verbose, but is a bit less clear, and will totally fail if we add another level to the tree.
+Basically, the screen reader user sees a sequence of links separated by headings, which is fairly clear, and slightly less verbose, but is a bit less clear, and will totally fail if we add another level to the tree.
 
 We thus favor the nested list approach because although it is a bit more verbose in ways, it is clearer and will scale if we add more menu levels.
 
