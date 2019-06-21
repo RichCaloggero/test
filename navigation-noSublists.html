@@ -2,51 +2,48 @@
 <html>
 <head>
 <meta charset="utf-8">
-<title>Navigation Test</title>
+<title>Navigation Test (no nested lists)</title>
 <style>
-nav {position: relative;}
-/*nav > ul > li {margin: 2em; display: inline;}*/
-/*nav ul ul li {display: block;}*/
 nav ul {
-opacity: 1;
 list-style-type: none;
 }
-.hidden {opacity: 0;}
+nav .collapseible {opacity: 1;}
+nav .collapseible.hidden {opacity: 0;}
 </style>
 </head>
 <body>
 <h1 tabindex="0">Navigation Test</h1>
 
 
-<nav><ul class="menu"><li>
+<nav><ul class="menu"><li class="menu-item">
 <h2><a class="label" href="#">top 1</a></h2>
-<ul class="collapseible menu"><li>
+<div class="collapseible menu"><div class="menu-item">
 <a href="#">item 1.1</a>
-</li><li>
+</div><div class="menu-item">
 <a href="#">item 1.2</a>
-</li><li>
+</div><div class="menu-item">
 <a href="#">item 1.3</a>
-</li></ul>
+</div></div>
 
-</li><li>
+</li><li class="menu-item">
 <h2><a class="label" href="#">top 2</a></h2>
-<ul class="collapseible menu"><li>
+<div class="collapseible menu"><div class="menu-item">
 <a href="#">item 2.1</a>
-</li><li>
+</div><div class="menu-item">
 <a href="#">item 2.2</a>
-</li><li>
+</div><div class="menu-item">
 <a href="#">item 2.3</a>
-</li></ul>
+</div></div>
 
-</li><li>
+</li><li class="menu-item">
 <h2><a class="label" href="#">top 3</a></h2>
-<ul class="collapseible menu"><li>
+<div class="collapseible menu"><div class="menu-item">
 <a href="#">item 3.1</a>
-</li><li>
+</div><div class="menu-item">
 <a href="#">item 3.2</a>
-</li><li>
+</div><div class="menu-item">
 <a href="#">item 3.3</a>
-</li></ul>
+</div></div>
 
 </li></ul>
 </nav>
@@ -107,13 +104,13 @@ return document.querySelector("nav > .menu");
 
 function menuLabel (menu) {
 if (!menu || menu === topMenu()) return null;
-return menu.closest("li").querySelector(".label");
+return menu.closest(".menu-item").querySelector(".label");
 //return menu.previousElementSibling;
 } // menuLabel
 
 function menuElement (label) {
 if (!label) return null;
-return label.closest("li").querySelector(".collapseible");
+return label.closest(".menu-item").querySelector(".collapseible");
 //return label.nextElementSibling;
 } // menuElement
 

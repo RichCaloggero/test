@@ -50,7 +50,6 @@ list-style-type: none;
 <script>
 hideAll();
 document.body.addEventListener("focusin", focusIn);
-document.body.addEventListener("focusout", focusOut);
 
 function focusIn (e) {
 if (!e.target) return;
@@ -64,23 +63,14 @@ return;
 } // if
 
 const menu = menuElement(label);
-if (menu && menu.hasAttribute("hidden")) show(menu);
+setTimeout(() => {
+if (menu && menu.hasAttribute("hidden")) {
+hideAll();
+show(menu);
+} // if
+}, 80);
 } // focusIn
 
-function focusOut (e) {
-setTimeout(() => {
-// e.target is label of menu losing focus
-// e.relatedTarget is label of menu gaining focus
-if (!e.target || !e.relatedTarget) return;
-const leaving = closestMenu(e.target);
-const entering = closestMenu(e.relatedTarget);
-if (!leaving || !entering || leaving === entering) return;
-//message(`focusOut: ${leaving.id}, ${entering.id}`);
-
-if (leaving.contains(entering)) show(entering);
-if (entering.contains(leaving)) hide(leaving);
-}, 0);
-} // focusOut
 
 function hideAll () {
 collapsibleMenus()

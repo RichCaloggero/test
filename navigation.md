@@ -29,16 +29,36 @@ If deciding to go this route, then:
 ### HTML
 
 ```
-<nav aria-label="site wide">
-<ul><li>
-<h2><a href="research.html">Research</a></h2>
-<ul><li>...sub menu...</li></ul>
+<nav><ul class="menu"><li>
+<h2><a class="label" href="#">top 1</a></h2>
+<ul class="collapseible menu"><li>
+<a href="#">item 1.1</a>
 </li><li>
-<h2><a href="about.html">About</a></h2>
-<ul><li>...sub menu...</li></ul>
+<a href="#">item 1.2</a>
 </li><li>
-<h2><a href="tools.html">Tools</a></h2>
-<ul><li>...sub menu...</li></ul>
+<a href="#">item 1.3</a>
+</li></ul>
+
+</li><li>
+<h2><a class="label" href="#">top 2</a></h2>
+<ul class="collapseible menu"><li>
+<a href="#">item 2.1</a>
+</li><li>
+<a href="#">item 2.2</a>
+</li><li>
+<a href="#">item 2.3</a>
+</li></ul>
+
+</li><li>
+<h2><a class="label" href="#">top 3</a></h2>
+<ul class="collapseible menu"><li>
+<a href="#">item 3.1</a>
+</li><li>
+<a href="#">item 3.2</a>
+</li><li>
+<a href="#">item 3.3</a>
+</li></ul>
+
 </li></ul>
 </nav>
 ```
@@ -57,35 +77,56 @@ return;
 } // if
 }); // focus outside nav
 
-topMenu().addEventListener("focusin", e => {
-//setTimeout(() => {
-focusIn(e);
-//}, focusInDelay);
-}); // cfocusin
+
+
+topMenu().addEventListener("focusin", focusIn); // cfocusin
 
 function focusIn (e) {
-message("focus in");
 if (!e.target) return;
 
 const label = e.target;
 const menu = menuElement(label);
 const parentMenu = closestMenu(label);
-message(`selecting ${menu} with parent ${parentMenu.id}`);
 
 if (parentMenu === topMenu()) {
-message("top.");
 if (menu && isHidden(menu)) show(menu);
+
 } else {
-message("sub menu.");
 if (isHidden(parentMenu)) show(parentMenu);
 } // if
-label.focus();
 } // focusIn
 ```
 
-### See full working example here:
+## See full working example
+
+### Using nested lists
+
+This example uses a typical nested list structure (see above) and will be very familiar to most users.
+
+Nested lists can be overly verbose and sometimes cumbersome to use, especially if there are many levels of nesting. The upside, however, is that all screen readers are good at letting the user know when they are switching levels (i.e. moving from a parent list to a sublist, or vice versa)
 
 - runnable: https://RichCaloggero.github.io/test/navigation.html
 - source: https://github.com/RichCaloggero/test/blob/master/navigation.html
 
 
+### no nested lists
+
+This example uses an outer list, and the collapseibles are simple divs.
+
+This is slightly less verbose (screen reader doesn't have to announce each list as it is entered, and doesn't need to continuously announce item counts, etc). However, the downside of this implementation is that what one gains in conciseness, is IMO a loss of clarity. In the examples below, the outer list items are wrapped in headings, so what the screen reader user sees would be something like this:
+
+>heading level 2, top 1<br>
+item 1.1<br>
+item 1.2<br>
+...<br>
+heading level 2, top 2<br>
+item 2.1<br>
+item 2.2<br>
+...<br>
+
+Basically, the screen reader user sees a sequence of links separated by headings, which is fairly clear, and slightly less verbose, but is a bit less clear, and will totally fail if we add another level to the tree.
+
+We thus favor the nested list approach because although it is a bit more verbose in ways, it is clearer and will scale if we add more menu levels.
+
+- runnable: https://RichCaloggero.github.io/test/navigation-noSublists.html
+- source: https://github.com/RichCaloggero/test/blob/master/navigation-noSublists.html
