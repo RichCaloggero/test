@@ -1,4 +1,4 @@
-class CollapsibleList extends HTMLUListElement {
+class CollapsibleList extends HTMLElement {
 static get observedAttributes() {
 return ["data-label"];
 } // get observedAttributes
@@ -9,22 +9,28 @@ this.root = this.attachShadow({mode: "open"});
 } // constructor
 
 connectedCallback () {
-console.debug (`list connected:\n${this.innerHTML}`);
-const root = this.shadowRoot;
-const listItem = document.createElement("li");
-root.appendChild(listItem);
+//console.debug (`list connected:\n${this.innerHTML}`);
+const old = this;
+const list = document.createElement("ul");
+const parent = this.parentElement;
+
 if (this.hasAttribute("data-label")) {
+const labelText = this.getAttribute("data-label");
+const top = parent.nodeName.toLowerCase() !== this.nodeName.toLowerCase();
+const listItem = document.createElement("li");
 const details = document.createElement("details");
-const summary = document.createElement("summary");
-summary.textContent = this.getAttribute("data-label");
-details.appendChild(summary);
+details.innerHTML = top? `<h2>${labelText}` : labelText;
 details.setAttribute("role", "presentation");
-Array.from(this.childNodes).forEach (child => details.appendChild(child));
+
 listItem.appendChild(details);
+Array.from(this.children).forEach(child => details.appendChild(child));
+list.append(listItem);
 
 } else {
-Array.from(this.childNodes).forEach (child => listItem.appendChild(child));
+Array.from(this.children).forEach(child => list.appendChild(child));
 } // if
+
+parent.replaceChild(list, this);
 } // connectedCallback 
 
 attributeChanged (name, value) {
@@ -34,4 +40,4 @@ console.log(`attributeChanged ${name}`);
 
 } // class CollapsibleList
 
-customElements.define ("collapsible-list", CollapsibleList, {extends: "ul"});
+customElements.define ("collapsible-list", CollapsibleList);
