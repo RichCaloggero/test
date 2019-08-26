@@ -1,3 +1,4 @@
+{ // local scope
 const initialLevel = 2;
 
 class CollapsibleList extends HTMLElement {
@@ -20,6 +21,18 @@ if (!this.level) this.level = initialLevel;
 
 Array.from(this.children).forEach(child => {
 child.level = this.level+1;
+
+if (child.tagName.toLowerCase() === "li") {
+ if (child.hasAttribute("data-href")) {
+const hRef = child.getAttribute("data-href");
+child.innerHTML = `<a href="${hRef}">${child.textContent}</a>`;
+
+} else if (child.hasAttribute("data-action")) {
+const action = child.getAttribute("data-action");
+child.innerHTML = `<button data-action="${action}">${child.textContent}</button>`;
+} // if
+} // if
+
 list.appendChild(child)
 });
 let container = list;
@@ -45,3 +58,4 @@ console.log(`attributeChanged ${name}`);
 } // class CollapsibleList
 
 customElements.define ("collapsible-list", CollapsibleList);
+} // end local scope

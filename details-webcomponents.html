@@ -8,23 +8,25 @@ nav ul {list-style-type: none;}
 </style>
 </head>
 <body>
+<h1>Details - web component implementation</h1>
+
 <nav><ul>
 <collapsible-list data-label="fruits">
 <collapsible-list data-label="mellons">
-<li>watermellon</li>
-<li>honey due mellon</li>
+<li data-href="water mellons are juicy">watermellon</li>
+<li data-href="honey due mellons are kind of gross">honey due mellon</li>
 
 </collapsible-list><collapsible-list data-label="citrus">
 <li>orange</li>
 <li>grapefruit</li>
 </collapsible-list>
-<li>apple</li>
-<li>grape</li>
+<li data-href="apples are cool">apple</li>
+<li>grape</li data-href="grapes are sweet">
 
 </collapsible-list><collapsible-list data-label="vegetables">
 <collapsible-list data-label="root vegetables">
-<li>carot</li>
-<li>potato</li>
+<li data-action="crunchy and good with hummus">carot</li>
+<li data-action="great with bacon">potato</li>
 </collapsible-list><collapsible-list data-label="greens">
 <li>lettuce</li>
 <li>spinach</li>
@@ -33,7 +35,21 @@ nav ul {list-style-type: none;}
 </collapsible-list>
 </ul></nav>
 
-<script src="details.js">
+<script src="details.js"></script>
+
+<script>
+document.querySelector("nav").addEventListener("click", e => {
+if (e.target.tagName.toLowerCase() === "a") {
+alert (`clicked ${e.target.tagName.toLowerCase()} with href ${e.target.getAttribute("href")}.`);
+e.preventDefault();
+
+} else if (e.target.tagName.toLowerCase() === "button") {
+alert (`clicked ${e.target.tagName.toLowerCase()} with action ${e.target.getAttribute("data-action")}.`);
+e.preventDefault();
+} // if
+});
+
 </script>
+
 </body>
 </html>
