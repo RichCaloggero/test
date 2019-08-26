@@ -1,7 +1,10 @@
+const initialLevel = 2;
+
 class CollapsibleList extends HTMLElement {
-static get observedAttributes() {
+/*static get observedAttributes() {
 return ["data-label"];
 } // get observedAttributes
+*/
 
 constructor () {
 super ();
@@ -10,27 +13,28 @@ this.root = this.attachShadow({mode: "open"});
 
 connectedCallback () {
 //console.debug (`list connected:\n${this.innerHTML}`);
-const old = this;
 const list = document.createElement("ul");
+const listItem = document.createElement("li");
 const parent = this.parentElement;
+if (!this.level) this.level = initialLevel;
 
+Array.from(this.children).forEach(child => {
+child.level = this.level+1;
+list.appendChild(child)
+});
+let container = list;
 if (this.hasAttribute("data-label")) {
 const labelText = this.getAttribute("data-label");
 const top = parent.nodeName.toLowerCase() !== this.nodeName.toLowerCase();
-const listItem = document.createElement("li");
 const details = document.createElement("details");
-details.innerHTML = top? `<h2>${labelText}` : labelText;
+details.innerHTML = `<summary><span role="heading" aria-level=${this.level.toString()}>${labelText}</span></summary>`;
 details.setAttribute("role", "presentation");
-
-listItem.appendChild(details);
-Array.from(this.children).forEach(child => details.appendChild(child));
-list.append(listItem);
-
-} else {
-Array.from(this.children).forEach(child => list.appendChild(child));
+details.appendChild(list);
+container = details;
 } // if
 
-parent.replaceChild(list, this);
+listItem.appendChild(container);
+parent.replaceChild(listItem, this);
 } // connectedCallback 
 
 attributeChanged (name, value) {
