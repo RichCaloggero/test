@@ -1,0 +1,52 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Test</title>
+</head>
+<body>
+<p><button>click me</button></p>
+<div id="messages" aria-live="polite">
+<p id="m1">first message</p>
+<p id="m2">second message</p>
+<p id="m3">third message</p>
+</div>
+
+<div id="editor">
+<label>
+<span>Please enter some text:</span><br>
+<input type="text"
+</label>
+</div>
+
+<script>
+const messages = document.querySelector("#messages");
+const selectors = ["#m1", "#m2", "#m3"];
+let index = 0;
+const button = document.querySelector("button");
+hideAllMessages();
+
+button.addEventListener("click", displayAndFocus);
+
+function displayAndFocus (e) {
+const message = messages.querySelector(selectors[index]);
+hideAllMessages();
+message.style.display = "block";
+index = (index+1) % selectors.length;
+document.querySelector("label > span").textContent = message.textContent;
+document.querySelector("input").focus();
+} // displayAndFocus
+
+function hideAllMessages () {
+selectors.forEach(selector => {
+const message = messages.querySelector(selector);
+//console.log(`hiding ${selector}: ${message.textContent}`);
+message.style.display = "none"
+});
+} // hideAllMessages
+
+
+</script>
+
+</body>
+</html>
