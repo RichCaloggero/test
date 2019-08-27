@@ -21,7 +21,9 @@ const noHeading = this.hasAttribute("no-heading");
 if (this.hasAttribute("tree")) {
 list.setAttribute("aria-activedescendant", id_treeActiveItem);
 list.setAttribute("role", "tree");
+list.setAttribute("tabindex", "0");
 this.tree = true;
+this.root = true;
 } else if (this.tree === true) {
 list.setAttribute("role", "group");
 } // if
@@ -36,7 +38,7 @@ if (!noHeading) child.level = this.level+1;
 child.tree = this.tree;
 
 if (child.matches("li")) {
- if (!this.tree) {
+if (!this.tree) {
 if (child.hasAttribute("data-href")) {
 const hRef = child.getAttribute("data-href");
 child.innerHTML = `<a href="${hRef}">${child.textContent}</a>`;
@@ -50,26 +52,30 @@ child.removeAttribute("data-action");
 } // if
 
 } else {
+if (child.matches("a, button")) child.setAttribute("tabindex", "-1");
 const listItem = document.createElement("li");
 listItem.appendChild(child);
 child = listItem;
-} // if
 
-if (this.tree) {
+ if (this.tree) {
 child.setAttribute("role", "treeitem");
 if (child.querySelector("ul, collapsible-list")) child.setAttribute("aria-expanded", "false");
 } // if
 
-list.appendChild(child)
+} // if
+
+if (this.root && list.children.length === 0) child.setAttribute("id", id_treeActiveItem);
+list.appendChild(child);
 });
 
 let container = list;
 if (this.hasAttribute("data-label")) {
 const labelText = this.getAttribute("data-label");
 const details = document.createElement("details");
-details.innerHTML = noHeading?
-`<summary>${labelText}</summary>`
+details.innerHTML =
+(this.tree || noHeading)? `<summary>${labelText}</summary>`
 : `<summary><span role="heading" aria-level=${this.level.toString()}>${labelText}</span></summary>`;
+if (this.tree) details.querySelector("summary").setAttribute("tabindex", "-1");
 details.setAttribute("role", "presentation");
 details.appendChild(list);
 container = details;
@@ -92,7 +98,7 @@ customElements.define ("collapsible-list", CollapsibleList);
 // utilities
 
 function up (element) {
-element = element.closest("role=tree > role=treeitem, role=group > role=treeitem");
+element = element.closest("[role=tree] > [role=treeitem], [role=group] > [role=treeitem]");
 if (element) {
 console.log (`up: ${element.tagName}, element.getAttribute("role")`);
 
@@ -102,7 +108,7 @@ return null;
 } // up
 
 function down (element) {
-element = element.querySelector("role=treeitem");
+element = element.querySelector("[role=treeitem]");
 if (element) {
 console.log (`down: ${element.tagName}, element.getAttribute("role")`);
 
@@ -149,4 +155,8 @@ root.setAttribute("role", "tree");
 return root;
 } // markupTree
 
+// tests
+
+$ = document.querySelector.bind(document);
+t = $("ul");
 
