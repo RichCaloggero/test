@@ -1,5 +1,6 @@
 { // local scope
 const initialLevel = 2;
+const id_treeActiveItem = "id_tree-active-item";
 
 class CollapsibleList extends HTMLElement {
 /*static get observedAttributes() {
@@ -16,6 +17,15 @@ connectedCallback () {
 const list = document.createElement("ul");
 const parent = this.parentElement;
 const noHeading = this.hasAttribute("no-heading");
+
+if (this.hasAttribute("tree")) {
+list.setAttribute("aria-activedescendant", id_treeActiveItem);
+list.setAttribute("role", "tree");
+this.tree = true;
+} else if (this.tree === true) {
+list.setAttribute("role", "group");
+} // if
+
 if (!this.level) {
 console.log(`level is ${this.getAttribute("level")}`);
 this.level = this.hasAttribute("level")? Number(this.getAttribute("level")) : initialLevel;
@@ -23,9 +33,11 @@ this.level = this.hasAttribute("level")? Number(this.getAttribute("level")) : in
 
 Array.from(this.children).forEach(child => {
 if (!noHeading) child.level = this.level+1;
+child.tree = this.tree;
 
 if (child.matches("li")) {
- if (child.hasAttribute("data-href")) {
+ if (!this.tree) {
+if (child.hasAttribute("data-href")) {
 const hRef = child.getAttribute("data-href");
 child.innerHTML = `<a href="${hRef}">${child.textContent}</a>`;
 child.removeAttribute("data-href");
@@ -35,11 +47,17 @@ const action = child.getAttribute("data-action");
 child.innerHTML = `<button data-action="${action}">${child.textContent}</button>`;
 child.removeAttribute("data-action");
 } // if
+} // if
 
 } else {
 const listItem = document.createElement("li");
 listItem.appendChild(child);
 child = listItem;
+} // if
+
+if (this.tree) {
+child.setAttribute("role", "treeitem");
+if (child.querySelector("ul, collapsible-list")) child.setAttribute("aria-expanded", "false");
 } // if
 
 list.appendChild(child)
@@ -118,17 +136,15 @@ Array.from(root.querySelectorAll("li ul"))
 .forEach(ul => ul.setAttribute("role", "group"));
 
 Array.from(root.querySelectorAll("li"))
-.forEach(li => li.setAttribute("role", "treeitem"));
-
-Array.from(root.querySelectorAll("[role=treeitem]"))
-.forEach(treeitem=> {
-if (treeitem.querySelector("[role=group]")) treeitem.setAttribute("aria-expanded", "false");
+.forEach(li => {
+li.setAttribute("role", "treeitem")
+if (li.querySelector("ul")) li.setAttribute("aria-expanded", "false");
 });
 
 Array.from(root.querySelectorAll("a, button"))
 .forEach(focusable => focusable.setAttribute("tabindex", "-1"));
 
-root.setAttribute("aria-activedescendant", "tree-active-item");
+root.setAttribute("aria-activedescendant", id_treeActiveItem);
 root.setAttribute("role", "tree");
 return root;
 } // markupTree
