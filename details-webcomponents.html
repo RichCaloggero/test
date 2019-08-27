@@ -10,7 +10,8 @@ nav ul {list-style-type: none;}
 <body>
 <h1>Details - web component implementation</h1>
 
-<nav><ul>
+<nav>
+<collapsible-list data-label="toggle navigation" no-heading level="3">
 <collapsible-list data-label="fruits">
 <collapsible-list data-label="mellons">
 <li data-href="water mellons are juicy">watermellon</li>
@@ -20,7 +21,7 @@ nav ul {list-style-type: none;}
 <li>orange</li>
 <li>grapefruit</li>
 </collapsible-list>
-<li data-href="apples are cool">apple</li>
+<a href="apples are cool">apple</a>
 <li>grape</li data-href="grapes are sweet">
 
 </collapsible-list><collapsible-list data-label="vegetables">
@@ -33,7 +34,7 @@ nav ul {list-style-type: none;}
 </collapsible-list>
 <li>broccoli</li>
 </collapsible-list>
-</ul></nav>
+</collapsible-list></nav>
 
 <script src="details.js"></script>
 
