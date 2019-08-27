@@ -68,4 +68,69 @@ console.log(`attributeChanged ${name}`);
 } // class CollapsibleList
 
 customElements.define ("collapsible-list", CollapsibleList);
+
 } // end local scope
+
+// utilities
+
+function up (element) {
+element = element.closest("role=tree > role=treeitem, role=group > role=treeitem");
+if (element) {
+console.log (`up: ${element.tagName}, element.getAttribute("role")`);
+
+} else {
+return null;
+} // if
+} // up
+
+function down (element) {
+element = element.querySelector("role=treeitem");
+if (element) {
+console.log (`down: ${element.tagName}, element.getAttribute("role")`);
+
+} else {
+return null;
+} // if
+} // down
+
+function next (element) {
+element = element.nextElementSibling;
+if (element) {
+console.log (`next: ${element.tagName}, element.getAttribute("role")`);
+
+} else {
+return null;
+} // if
+} // next
+
+function previous (element) {
+element = element.previousElementSibling;
+if (element) {
+console.log (`previous: ${element.tagName}, element.getAttribute("role")`);
+
+} else {
+return null;
+} // if
+} // previous
+
+function markupTree (root) {
+Array.from(root.querySelectorAll("li ul"))
+.forEach(ul => ul.setAttribute("role", "group"));
+
+Array.from(root.querySelectorAll("li"))
+.forEach(li => li.setAttribute("role", "treeitem"));
+
+Array.from(root.querySelectorAll("[role=treeitem]"))
+.forEach(treeitem=> {
+if (treeitem.querySelector("[role=group]")) treeitem.setAttribute("aria-expanded", "false");
+});
+
+Array.from(root.querySelectorAll("a, button"))
+.forEach(focusable => focusable.setAttribute("tabindex", "-1"));
+
+root.setAttribute("aria-activedescendant", "tree-active-item");
+root.setAttribute("role", "tree");
+return root;
+} // markupTree
+
+
