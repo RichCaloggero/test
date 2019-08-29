@@ -24,6 +24,7 @@ list.setAttribute("role", "tree");
 list.setAttribute("tabindex", "0");
 this.tree = true;
 this.root = true;
+bindTreeNavigationKeys(list);
 } else if (this.tree === true) {
 list.setAttribute("role", "group");
 } // if
@@ -37,7 +38,7 @@ Array.from(this.children).forEach(child => {
 if (!noHeading) child.level = this.level+1;
 child.tree = this.tree;
 
-if (child.matches("li")) {
+if (child.matches("li") && containsOnlyTextNodes(child)) {
 if (!this.tree) {
 if (child.hasAttribute("data-href")) {
 const hRef = child.getAttribute("data-href");
@@ -52,7 +53,14 @@ child.removeAttribute("data-action");
 } // if
 
 } else {
-if (child.matches("a, button")) child.setAttribute("tabindex", "-1");
+const parent = child.parentElement;
+if (containsOnlyTextNodes(parent)) {
+parent.innerHTML = `<span>${parent.textContent}</span>`;
+child = parent.children[0];
+} else if (child.matches("a, button")) {
+child.setAttribute("tabindex", "-1");
+} // if
+
 const listItem = document.createElement("li");
 listItem.appendChild(child);
 child = listItem;
@@ -66,7 +74,7 @@ if (child.querySelector("ul, collapsible-list")) child.setAttribute("aria-expand
 
 if (this.root && list.children.length === 0) child.setAttribute("id", id_treeActiveItem);
 list.appendChild(child);
-});
+}); // forEach children
 
 let container = list;
 if (this.hasAttribute("data-label")) {
@@ -93,49 +101,139 @@ console.log(`attributeChanged ${name}`);
 
 customElements.define ("collapsible-list", CollapsibleList);
 
-} // end local scope
+function bindTreeNavigationKeys (root) {
+console.log(`binding to ${root}:`);
+root.addEventListener ("keydown", e => {
+const key = e.key;
+switch (key) {
+case "ArrowUp": setFocus(previous(getFocus()));
+break;
 
-// utilities
+case "ArrowDown": setFocus(next(getFocus()));
+break;
+
+case "ArrowLeft": setFocus(up(getFocus()));
+break;
+
+case "ArrowRight": setFocus(down(getFocus()));
+break;
+
+default: return true;
+} // switch
+
+e.preventDefault();
+return false;
+}); // keydown
+
+function getFocus () {
+const element = document.getElementById(id_treeActiveItem);
+console.log(`getFocus: `, element);
+return element.closest("[role=treeitem]");
+} // getFocus
+
+function setFocus (element) {
+if (isLeafNode(element)) {
+element = element.querySelector("a, button");
+} // if
+
+if (element) {
+document.getElementById(id_treeActiveItem).removeAttribute("id");
+element.id = id_treeActiveItem;
+root.removeAttribute("aria-activedescendant");
+root.setAttribute("aria-activedescendant", id_treeActiveItem);
+return element;
+} // if
+
+throw new Error("setFocus to null");
+} // setFocus
+
+function next (element) {
+element = element.nextElementSibling;
+console.log (`next: ${element.tagName}, ${element.getAttribute("role")}`);
+return element;
+} // next
+
+function previous (element) {
+element = element.previousElementSibling;
+console.log (`previous: ${element.tagName}, element.getAttribute("role")`);
+return element;
+} // previous
 
 function up (element) {
-element = element.closest("[role=tree] > [role=treeitem], [role=group] > [role=treeitem]");
-if (element) {
-console.log (`up: ${element.tagName}, element.getAttribute("role")`);
-
+if (! element) return null;
+element = element.parentElement.closest("[role=treeitem]");
+if (element && root.contains(element)) {
+closeBranch(element);
+return element;
 } else {
 return null;
 } // if
 } // up
 
 function down (element) {
+if (! element) return null
+if (! isLeafNode(element)) {
+openBranch(element);
 element = element.querySelector("[role=treeitem]");
-if (element) {
-console.log (`down: ${element.tagName}, element.getAttribute("role")`);
-
-} else {
-return null;
 } // if
+return element;
 } // down
 
-function next (element) {
-element = element.nextElementSibling;
-if (element) {
-console.log (`next: ${element.tagName}, element.getAttribute("role")`);
+function openBranch (node) {
+console.log(`opening branch: ${node.children[0].children[0].textContent}`);
+if (node && !isLeafNode(node)) {
+const details = node.children[0];
+node.setAttribute("aria-expanded", "true");
+if (details.matches("details")) details.setAttribute("open", "");
+console.log(`openBranch: ${node} ${details}`);
+} // if
 
-} else {
+return node;
+} // openBranch
+
+function closeBranch (node) {
+console.log(`closing branch: ${node.children[0].children[0].textContent} ${node.children[0].hasAttribute("open")}`);
+if (node && !isLeafNode(node)) {
+const details = node.children[0];
+node.setAttribute("aria-expanded", "false");
+if (details.matches("details")) details.removeAttribute("open");
+console.log(`closeBranch: ${node} ${details}`);
+} // if
+
+return node;
+} // closeBranch
+
+} // bindTreeNavigationKeys
+
+
+function isLeafNode (element) {
+return element.matches("[role=treeitem]") && !element.hasAttribute("aria-expanded");
+} // isLeafNode
+
+function containsOnlyTextNodes (element) {
+return element.children.length === 0;
+} // containsOnlyTextNodes 
+
+} // end local scope
+
+/*function getFocus(element) {
+console.log(`getFocus: ${element}`);
+const container = element.closest("[role=treeitem]");
+if (isLeafNode(element)) return element;
+else if (container.contains(element) && !isLeafNode(element)) return element;
+else {
+alert ("invalid focus");
 return null;
 } // if
-} // next
+} // getFocus
 
-function previous (element) {
-element = element.previousElementSibling;
-if (element) {
-console.log (`previous: ${element.tagName}, element.getAttribute("role")`);
+function setFocus (element) {
+element.focus();
+} // setFocus
+*/
 
-} else {
-return null;
-} // if
-} // previous
+
+
 
 function markupTree (root) {
 Array.from(root.querySelectorAll("li ul"))
