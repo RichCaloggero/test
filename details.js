@@ -38,7 +38,7 @@ Array.from(this.children).forEach(child => {
 if (!noHeading) child.level = this.level+1;
 child.tree = this.tree;
 
-if (child.matches("li") && containsOnlyTextNodes(child)) {
+if (child.matches("li")) {
 if (!this.tree) {
 if (child.hasAttribute("data-href")) {
 const hRef = child.getAttribute("data-href");
@@ -54,25 +54,25 @@ child.removeAttribute("data-action");
 
 } else {
 const parent = child.parentElement;
-if (containsOnlyTextNodes(parent)) {
-parent.innerHTML = `<span>${parent.textContent}</span>`;
-child = parent.children[0];
-} else if (child.matches("a, button")) {
-child.setAttribute("tabindex", "-1");
-} // if
 
 const listItem = document.createElement("li");
 listItem.appendChild(child);
 child = listItem;
+ } // if
 
- if (this.tree) {
+if (this.tree) {
+if (containsOnlyTextNodes(child)) {
+child.innerHTML = `<span tabindex="-1">${child.textContent}</span>`;
+} else if (isFocusable(child.firstElementChild)) {
+child.firstElementChild.setAttribute("tabindex", "-1");
+} // if
+
 child.setAttribute("role", "treeitem");
 if (child.querySelector("ul, collapsible-list")) child.setAttribute("aria-expanded", "false");
-} // if
-
-} // if
 
 if (this.root && list.children.length === 0) child.setAttribute("id", id_treeActiveItem);
+} // if tree
+
 list.appendChild(child);
 }); // forEach children
 
@@ -132,30 +132,32 @@ return element.closest("[role=treeitem]");
 } // getFocus
 
 function setFocus (element) {
-if (isLeafNode(element)) {
-element = element.querySelector("a, button");
+/*if (isLeafNode(element)) {
+element = element.firstElementChild;
 } // if
+*/
 
 if (element) {
 document.getElementById(id_treeActiveItem).removeAttribute("id");
-element.id = id_treeActiveItem;
+element.setAttribute("id", id_treeActiveItem);
 root.removeAttribute("aria-activedescendant");
 root.setAttribute("aria-activedescendant", id_treeActiveItem);
+console.log(`setFocus: `, element);
 return element;
 } // if
 
-throw new Error("setFocus to null");
+console.log(`setFocus: element is null`);
 } // setFocus
 
 function next (element) {
 element = element.nextElementSibling;
-console.log (`next: ${element.tagName}, ${element.getAttribute("role")}`);
+console.log ("next: ", element);
 return element;
 } // next
 
 function previous (element) {
 element = element.previousElementSibling;
-console.log (`previous: ${element.tagName}, element.getAttribute("role")`);
+console.log ("previous: ", element);
 return element;
 } // previous
 
@@ -213,6 +215,10 @@ return element.matches("[role=treeitem]") && !element.hasAttribute("aria-expande
 function containsOnlyTextNodes (element) {
 return element.children.length === 0;
 } // containsOnlyTextNodes 
+
+function isFocusable (element) {
+return element.matches("a, button, [tabindex]");
+} // isFocusable
 
 } // end local scope
 
