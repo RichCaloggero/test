@@ -1,0 +1,79 @@
+<doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Test (1)</title>
+</head>
+<body>
+<h1>Test (1)</h1>
+
+
+<h2>Simplified</h2>
+<fieldset><legend><h2>Choose a category (press tab followed by enter to hear a description for that category)</h2></legend>
+<div id="categories" class="radio-group">
+<div class="radio"><label>
+<input type="radio" name="category">
+<a href="#" data-category="cat1">category 1</a>
+</label></div>
+
+<div class="radio"><label>
+<input type="radio" name="category">
+<a href="#" data-category="cat2">category 2</a>
+</label></div>
+
+<div class="radio"><label>
+<input type="radio" name="category">
+<a href="#" data-category="cat3">category 3</a>
+</label></div>
+
+<div id="message" aria-live="polite"></div>
+</div><!-- simplified -->
+</fieldset>
+
+<script>
+const categories = document.querySelector("#categories");
+removeAllFromTabOrder();
+addTitles();
+
+categories.addEventListener("click", e => {
+if (e.target.matches("input")) {
+removeAllFromTabOrder();
+e.target.nextElementSibling.removeAttribute("tabindex");
+} else if (e.target.matches("a")) {
+const cat = e.target.getAttribute("data-category");
+createModal(cat, `This is a modal containing the description for category ${cat}`, e.target.previousElementSibling);
+e.preventDefault();
+} // if
+});
+
+function removeAllFromTabOrder () {
+Array.from(categories.querySelectorAll("[data-category]"))
+.forEach(cat => cat.setAttribute("tabindex", "-1"));
+} // removeAllFromTabOrder 
+
+function addTitles () {
+Array.from(categories.querySelectorAll("[data-category]"))
+.forEach(cat => cat.setAttribute("title", "description"));
+} // addTitles
+
+function createModal (categoryName, description, returnTo) {
+const div = document.createElement("div");
+div.innerHTML = `<div class="modal" role="dialog" aria-labelledby="category-description-title" aria-describedby="category-description-text">
+<button id="category-description-close">close</button>
+<h2 id="category-description-title">${categoryName}</h2>
+<p id="category-description-text">${description}</p>
+</div>`;
+
+document.body.appendChild(div);
+div.querySelector("#category-description-close").addEventListener("click", e => {
+document.body.removeChild(div);
+returnTo.focus();
+});  // close handler
+div.querySelector("#category-description-close").focus();
+} // createModal
+
+</script>
+
+
+</body>
+</html>
