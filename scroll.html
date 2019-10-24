@@ -1,0 +1,42 @@
+<doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Test</title>
+</head>
+<body>
+<h1>Test</h1>
+
+<div>
+<label>Scroll via mouse: <input type="checkbox" id="mouse"></label>
+<br><label>Scroll via keyboard: <input type="checkbox" id="keyboard"></label>
+</div>
+
+<div id="scroll">
+</div>
+
+<script>
+const scroll = document.querySelector("#scroll");
+document.querySelector("#mouse").addEventListener("input", enableMouseScroll);
+document.querySelector("#keyboard").addEventListener("input", enableKeyboardScroll);
+initializeScroll();
+
+function enableMouseScroll (e) {
+scroll.style.overflow = e.target.checked? "scroll" : "none";
+} // enableMouseScroll
+
+function enableKeyboardScroll (e) {
+scroll.setAttribute("tabindex",
+e.target.checked? "0" : "-1"
+);
+} // enableKeyboardScroll
+
+function initializeScroll () {
+let html = "";
+for (let i = 0; i < 6000; i++) html += `Line ${i}<br>\n`;
+scroll.innerHTML = html;
+} // initializeScroll
+</script>
+
+</body>
+</html>
