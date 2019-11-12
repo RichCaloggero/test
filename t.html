@@ -3,13 +3,13 @@
 <head>
 <meta charset="utf-8">
 <title>disclosure nav test</title>
-<link rel="stylesheet" href="t.css">
+<link id="my-stylesheet" rel="stylesheet" href="t.css">
 </head>
 <body>
 
 <div>
-<label>Use original style sheet:
-<input type="checkbox" id="use-original-styles">
+<label>remove relative position on focused button:
+<input type="checkbox" id="remove-relative">
 </label>
 </div>
 
@@ -143,17 +143,13 @@
 
 <script src="t.js"></script>
 <script>
-document.querySelector("#use-original-styles").addEventListener("change", e => {
-if (e.target.checked) loadStyleSheet("t1.css");
-else loadStyleSheet("t.css");
-}); // switch styles
-
-function loadStyleSheet (file) {
-const head = document.querySelector("head");
-const link = head.querySelector("link");
-link.setAttribute("href", file);
-link.setAttribute("rel", "stylesheet");
-} // loadStyleSheet
+document.querySelector("#remove-relative").addEventListener ("change", e => {
+if (e.target.checked) {
+document.querySelectorAll(".disclosure-nav").forEach(nav => nav.classList.add("no-relative-on-focus"));
+} else {
+document.querySelectorAll(".disclosure-nav").forEach(nav => nav.classList.remove("no-relative-on-focus"));
+} // if
+});
 </script>
 
 </body>
