@@ -7,6 +7,12 @@
 </head>
 <body>
 
+<div>
+<label>Use original style sheet:
+<input type="checkbox" id="use-original-styles">
+</label>
+</div>
+
 <nav aria-label="Mythical University">
   <ul id="exTest" class="disclosure-nav">
     <li>
@@ -136,6 +142,19 @@
 </div>
 
 <script src="t.js"></script>
+<script>
+document.querySelector("#use-original-styles").addEventListener("change", e => {
+if (e.target.checked) loadStyleSheet("t1.css");
+else loadStyleSheet("t.css");
+}); // switch styles
+
+function loadStyleSheet (file) {
+const head = document.querySelector("head");
+const link = head.querySelector("link");
+link.setAttribute("href", file);
+link.setAttribute("rel", "stylesheet");
+} // loadStyleSheet
+</script>
 
 </body>
 </html>
