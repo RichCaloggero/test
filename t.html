@@ -2,158 +2,75 @@
 <html>
 <head>
 <meta charset="utf-8">
-<title>disclosure nav test</title>
-<link rel="stylesheet" href="t.css">
+<title>test</title>
+<script src="./bufferToWave.js"></script>
 </head>
 <body>
+<h1>Test</h1>
+<button>get audio</button>
+<audio controls></audio>
 
-<div>
-<label>Use original style sheet:
-<input type="checkbox" id="use-original-styles">
-</label>
-</div>
+<div id="log" role="log"></div>
 
-<nav aria-label="Mythical University">
-  <ul id="exTest" class="disclosure-nav">
-    <li>
-      <button aria-expanded="true" aria-controls="id_about_menu">
-        About
-      </button>
-      <ul id="id_about_menu">
-        <li>
-          <a href="#mythical-page-content">
-            Overview
-          </a>
-        </li>
-        <li>
-          <a href="#mythical-page-content">
-            Administration
-          </a>
-        </li>
-        <li>
-          <a href="#mythical-page-content">
-            Facts
-          </a>
-        </li>
-        <li>
-          <a href="#mythical-page-content">
-            Campus Tours
-          </a>
-        </li>
-      </ul>
-    </li>
-    <li>
-      <button aria-expanded="true" aria-controls="id_admissions_menu">
-        Admissions
-      </button>
-      <ul id="id_admissions_menu">
-        <li>
-          <a href="#mythical-page-content">
-            Apply
-          </a>
-        </li>
-        <li>
-          <a href="#mythical-page-content">
-            Tuition
-          </a>
-        </li>
-        <li>
-          <a href="#mythical-page-content">
-            Sign Up
-          </a>
-        </li>
-        <li>
-          <a href="#mythical-page-content">
-            Visit
-          </a>
-        </li>
-        <li>
-          <a href="#mythical-page-content">
-            Photo Tour
-          </a>
-        </li>
-        <li>
-          <a href="#mythical-page-content">
-            Connect
-          </a>
-        </li>
-      </ul>
-    </li>
-    <li>
-      <button aria-expanded="true" aria-controls="id_academics_menu">
-        Academics
-      </button>
-      <ul id="id_academics_menu">
-        <li>
-          <a href="#mythical-page-content">
-            Colleges & Schools
-          </a>
-        </li>
-        <li>
-          <a href="#mythical-page-content">
-            Programs of Study
-          </a>
-        </li>
-        <li>
-          <a href="#mythical-page-content">
-            Honors Programs
-          </a>
-        </li>
-        <li>
-          <a href="#mythical-page-content">
-            Online Courses
-          </a>
-        </li>
-        <li>
-          <a href="#mythical-page-content">
-            Course Explorer
-          </a>
-        </li>
-        <li>
-          <a href="#mythical-page-content">
-            Register for Class
-          </a>
-        </li>
-        <li>
-          <a href="#mythical-page-content">
-            Academic Calendar
-          </a>
-        </li>
-        <li>
-          <a href="#mythical-page-content">
-            Transcripts
-          </a>
-        </li>
-      </ul>
-    </li>
-  </ul>
-</nav>
-<div id="mythical-page-content"
-     class="disclosure-pagecontent"
-     tabindex="-1"
-     role="region"
-     aria-label="Mythical University sample page content">
-  <h3 id="mythical-page-heading">
-    Mythical University
-  </h3>
-  <p>
-    Sample content section. Activating a link above will update and navigate to this region.
-  </p>
-</div>
-
-<script src="t.js"></script>
 <script>
-document.querySelector("#use-original-styles").addEventListener("change", e => {
-if (e.target.checked) loadStyleSheet("t1.css");
-else loadStyleSheet("t.css");
-}); // switch styles
+const a = new AudioContext();
+const audioElement = document.querySelector("audio");
 
-function loadStyleSheet (file) {
-const head = document.querySelector("head");
-const link = head.querySelector("link");
-link.setAttribute("href", file);
-link.setAttribute("rel", "stylesheet");
-} // loadStyleSheet
+document.querySelector("button").addEventListener("click", e => {
+processAudio("./t.mp3");
+});
+log ("ready.");
+
+
+function processAudio (url) {
+fetch(url)
+.then(response=> {
+if (response.ok) return response.arrayBuffer();
+else throw new Error(response.statusText);
+ }).then(data => a.decodeAudioData(data))
+.then(buffer => {
+log ("File read ok.");
+const c = new OfflineAudioContext(2, buffer.length, 44100);
+const s = c.createBufferSource();
+s.buffer = buffer;
+s.connect(c.destination);
+s.start();
+
+c.startRendering().then(buffer => {
+log(`rendering complete; ${buffer.duration} seconds of audio`);
+const blob = bufferToWave(buffer, buffer.length);
+log("- converted to .wav...");
+url = URL.createObjectURL(blob);
+audioElement.src = url;
+log("- url created...");
+});
+
+}).catch(error => alert (error));
+} // get2
+
+
+function get1 (url) {
+fetch(url)
+.then(response=> {
+if (response.ok) return response.arrayBuffer();
+else throw new Error(response.statusText);
+ }).then(data => c.decodeAudioData(data))
+.then(buffer => {
+  const blob = new Blob(buffer, { 'type' : 'audio/ogg; codecs=opus' });
+const url = URL.createObjectURL(blob);
+a.src = url;
+a.play();
+
+})
+.catch(error => alert (error));
+} // get1
+
+function log(text) {
+const p = document.createElement("p");
+p.appendChild(document.createTextNode(text));
+document.querySelector("#log").appendChild(p);
+} // log
+
 </script>
 
 </body>
