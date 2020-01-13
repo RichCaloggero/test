@@ -2,155 +2,20 @@
 <html>
 <head>
 <meta charset="utf-8">
-<title>disclosure nav test</title>
-<link id="my-stylesheet" rel="stylesheet" href="t.css">
+<title>test</title>
+<style>
+ul {list-style-type: none;}
+ul .button:focus {position: relative;}
+</style>
 </head>
 <body>
 
-<div>
-<label>remove relative position on focused button:
-<input type="checkbox" id="remove-relative">
-</label>
-</div>
-
-<nav aria-label="Mythical University">
-  <ul id="exTest" class="disclosure-nav">
-    <li>
-      <button aria-expanded="true" aria-controls="id_about_menu">
-        About
-      </button>
-      <ul id="id_about_menu">
-        <li>
-          <a href="#mythical-page-content">
-            Overview
-          </a>
-        </li>
-        <li>
-          <a href="#mythical-page-content">
-            Administration
-          </a>
-        </li>
-        <li>
-          <a href="#mythical-page-content">
-            Facts
-          </a>
-        </li>
-        <li>
-          <a href="#mythical-page-content">
-            Campus Tours
-          </a>
-        </li>
-      </ul>
-    </li>
-    <li>
-      <button aria-expanded="true" aria-controls="id_admissions_menu">
-        Admissions
-      </button>
-      <ul id="id_admissions_menu">
-        <li>
-          <a href="#mythical-page-content">
-            Apply
-          </a>
-        </li>
-        <li>
-          <a href="#mythical-page-content">
-            Tuition
-          </a>
-        </li>
-        <li>
-          <a href="#mythical-page-content">
-            Sign Up
-          </a>
-        </li>
-        <li>
-          <a href="#mythical-page-content">
-            Visit
-          </a>
-        </li>
-        <li>
-          <a href="#mythical-page-content">
-            Photo Tour
-          </a>
-        </li>
-        <li>
-          <a href="#mythical-page-content">
-            Connect
-          </a>
-        </li>
-      </ul>
-    </li>
-    <li>
-      <button aria-expanded="true" aria-controls="id_academics_menu">
-        Academics
-      </button>
-      <ul id="id_academics_menu">
-        <li>
-          <a href="#mythical-page-content">
-            Colleges & Schools
-          </a>
-        </li>
-        <li>
-          <a href="#mythical-page-content">
-            Programs of Study
-          </a>
-        </li>
-        <li>
-          <a href="#mythical-page-content">
-            Honors Programs
-          </a>
-        </li>
-        <li>
-          <a href="#mythical-page-content">
-            Online Courses
-          </a>
-        </li>
-        <li>
-          <a href="#mythical-page-content">
-            Course Explorer
-          </a>
-        </li>
-        <li>
-          <a href="#mythical-page-content">
-            Register for Class
-          </a>
-        </li>
-        <li>
-          <a href="#mythical-page-content">
-            Academic Calendar
-          </a>
-        </li>
-        <li>
-          <a href="#mythical-page-content">
-            Transcripts
-          </a>
-        </li>
-      </ul>
-    </li>
-  </ul>
+<nav>
+<ul><li>
+<span tabindex="0" class="button">A Button</span>
+<ul><li>a sublist item</li></ul>
+</li></ul>
 </nav>
-<div id="mythical-page-content"
-     class="disclosure-pagecontent"
-     tabindex="-1"
-     role="region"
-     aria-label="Mythical University sample page content">
-  <h3 id="mythical-page-heading">
-    Mythical University
-  </h3>
-  <p>
-    Sample content section. Activating a link above will update and navigate to this region.
-  </p>
-</div>
-
-<script src="t.js"></script>
-<script>
-document.querySelector("#remove-relative").addEventListener ("change", e => {
-if (e.target.checked) {
-document.querySelectorAll(".disclosure-nav").forEach(nav => nav.classList.add("no-relative-on-focus"));
-} else {
-document.querySelectorAll(".disclosure-nav").forEach(nav => nav.classList.remove("no-relative-on-focus"));
-} // if
-});
-</script>
 
 </body>
 </html>

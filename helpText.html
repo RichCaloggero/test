@@ -1,0 +1,39 @@
+<!doctype html>
+<head>
+<meta charset="utf-8">
+<title>test</title>
+</head>
+<body>
+<label>quantity: <input type="range" id="q" helpText="how many widgets"></label>
+<label>name: <input type="text" id="name" helpText="first and last names"></label>
+
+
+<script>
+document.body.addEventListener("keydown", displayHelpText);
+document.body.addEventListener("focusout", removeHelpText);
+
+function displayHelpText (e) {
+const input = e.target;
+const key = e.key;
+const text = e.target.getAttribute("helpText");
+if (key === "F1" && text) {
+e.target.setAttribute("title", text);
+e.target.focus();
+} // if
+} // displayHelpText
+
+function removeHelpText (e) {
+if (e.target.hasAttribute("helpText") && e.target.hasAttribute("title")) {
+setTimeout(() => e.target.removeAttribute("title"), 0);
+} // if
+} // removeHelpText
+
+function statusMessage (text) {
+document.querySelector("#message").appendChild(document.createTextNode(text));
+} // statusMessage
+statusMessage("Ready.");
+
+</script>
+
+</body>
+</html>
