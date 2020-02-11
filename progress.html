@@ -19,16 +19,18 @@ load();
 
 function load () {
 if (loading === 0) message ("loading...");
-progress(loading);
+//progress(loading);
 const increment = 20;
 const t = 1000;
 
 setTimeout(function _report () {
 loading += increment;
-if (loading < 100) setTimeout(_report, 1500);
-
-if (loading <= 100) progress(loading);
-if (loading >= 100) message ("loading complete.");
+if (loading < 100) {
+progress(loading);
+setTimeout(_report, 1500);
+} else {
+message ("loading complete.");
+} // if
 }, 1500);
 
 function message (text) {
