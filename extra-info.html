@@ -1,0 +1,64 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>test</title>
+</head>
+<body>
+<h1>Test</h1>
+<div id="container">
+<fieldset>
+<legend><h2>group 1</h2></legend>
+ <label>item 1 <input type="checkbox" aria-describedby="info-item1" id="item1"></label>
+<label>item 2 <input type="checkbox" aria-describedby="info-item2" id="item2"></label>
+</fieldset>
+
+<fieldset>
+<legend><h2>group 2</h2></legend>
+<label>item 3 <input type="checkbox" aria-describedby="info-item3" id="item3"></label>
+</fieldset>
+</div>
+
+<div id="info">
+<div hidden id="info-item1"><p>A fairly short one-liner.</p></div>
+<div hidden id="info-item2" >
+<p>A longer message.</p>
+<p>... perhaps broken onto two lines ...</p>
+</div>
+
+<div hidden id="info-item3">
+<p>a long one:</p>
+<ul><li>
+including a list
+</li><li>
+similar to the info
+</li><li>
+that pops up when hovering
+</li><li>
+the student life checkbox
+</li></ul>
+</div>
+</div>
+
+<script>
+const container = document.querySelector("#container");
+container.addEventListener("focusin", handleFocus);
+
+function handleFocus (e) {
+hideAll();
+show(e.target.getAttribute("aria-describedby"));
+setTimeout(() => hideAll(), 7000);
+} // handleFocus
+
+function hideAll () {
+document.querySelectorAll("#info > *").forEach(x => x.hidden = true);
+} // hideAll
+
+function show (id) {
+document.querySelector(`#${id}`).hidden = false;
+} // show
+
+</script>
+
+</html>
+
