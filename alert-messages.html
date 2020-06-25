@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Test</title>
+<style>
+.hidden {display: none;}
+</style>
+</head>
+<body>
+
+
+<div id="test1">
+<button class="show">show 1</button>
+<button class="hide">hide 1</button>
+
+<div role="alert" class="hidden">
+<p>this is message 1.1</p>
+</div>
+
+<div role="alert" class="hidden">
+<p>this is message 1.2</p>
+</div>
+
+<div role="alert" class="hidden">
+<p>this is message 1.3</p>
+</div>
+
+
+<div role="alert" class="hidden">
+<p>this is message 1.4</p>
+</div>
+
+<div role="alert" class="hidden">
+<p>this is message 1.5</p>
+</div>
+
+<div role="alert" class="hidden">
+<p>this is message 1.6</p>
+</div>
+</div>
+
+<div id="test2">
+<button class="show">show 2</button>
+<button class="hide">hide 2</button>
+</div>
+
+<div id="test3">
+<form action="#" novalidate>
+<p><label>value 1: <input required></label></p>
+<p><label>value 2: <input required></label></p>
+<p><label>value 3: <input required></label></p>
+<p><label>value 4: <input required></label></p>
+<p><label>value 5: <input required></label></p>
+<p><label>value 6: <input required></label></p>
+
+<p><button class="submit">submit</button></p>
+</form>
+</div>
+
+<script>
+$("#test1 .show").addEventListener("click", e => showAlerts(e.target.parentElement));
+$("#test1 .hide").addEventListener("click", e => hideAlerts(e.target.parentElement));
+
+$("#test2 .show").addEventListener("click", e => addAlerts(e.target.parentElement));
+$("#test2 .hide").addEventListener("click", e => removeAlerts(e.target.parentElement));
+
+$("#test3 .submit").addEventListener("click", e => {
+removeAlerts($("#test3"));
+$$("#test3 input").forEach(x => {
+if (!x.checkValidity()) {
+addAlert(`${x.parentElement.textContent} is invalid`, $("#test3"));
+} // if
+}); // check
+}); // addEventListener
+
+
+
+
+function showAlerts (context) {
+$$("[role=alert]", context).forEach(x => x.classList.remove("hidden"));
+} // showAlerts
+
+function hideAlerts (context) {
+$$("[role=alert]", context).forEach(x => x.classList.add("hidden"));
+} // hideAlerts
+ 
+function addAlerts (context) {
+for (let i=1; i<=6; i++) {
+addAlert(`this is message 2.${i}`, context);
+} // for
+} // addAlerts
+
+function removeAlerts (context) {
+$$("[role=alert]", context).forEach(x => context.removeChild(x));
+} // removeAlerts
+
+function addAlert (message, context) {
+const div = document.createElement("div");
+div.setAttribute("role", "alert");
+div.innerHTML = `<p>${message}</p>`;
+context.appendChild(div);
+} // addAlert
+
+function $ (selector, context = document) {
+return context.querySelector(selector);
+} // $
+
+function $$ (selector, context = document) {
+return context.querySelectorAll(selector);
+} // $$
+
+</script>
+
+</body>
+</html>

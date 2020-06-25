@@ -1,0 +1,123 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Keyboard Test</title>
+</head>
+<body> 
+<h1>Test</h1>
+
+<p>Use this to understand how keyboard input is processed in web documents, and how screen readers effect this processing.
+In general, links, buttons, input elements, and select elements have full keyboard support built-in.
+This means that developers need only handle click events on these elements, because the browser takes care of generating click events from keyboard input.
+Screen readers will generate additional click events in some circumstances, which means that sometimes developers may need to explicitly add keyboard support to handle the keyboard when a screen reader is not running.
+</p><p>
+This app uses the speech synthesis API built into most modern web browsers, so tests can be run by users who depend on screen readers when the screen reader is not running (see below).
+</p>
+
+<h2>How to use</h2>
+
+<h3>First test without screen reader running</h3>
+
+<p>When a control gains focus, it will be voiced.
+Try both enter and space keys on each control.
+You should find that html buttons, links, and input controls have support for keyboard control built in; they will respond to the keyboard with a click event, whether or not a screen reader is running.
+Other elements like spans and paragraph elements do not have built-in keyboard support, even when they are told to accept keyboard focus via tabindex="0".
+You should find that the span element here with explicit keyboard support generates both a keyboard event and a click event because the app handles the keyboard event, then immeidately fires a click event at the element.
+</p>
+
+<h3>Then enable a screen reader</h3>
+
+<p>As you tab through the page, you will hear the screen reader speak each control, as well as the web speech API's rendering.
+You should now find that pressing enter or space keys on all controls, even those without explicit keyboard handlers will catch clicks.
+You should also find that those with explicit keyboard handlers do not catch keyboard events, because the screen reader is catching keyboard input, and is generating click events and sending them to the focused element.
+This has a few consequences as described below.
+</p>
+
+<ol><li>
+<p>Links and buttons will operate similarly whether or not a screen reader is running.
+Both mouse and keyboard will generate click events, so no explicit keyboard events need be handled if using these elements.
+</p><ul>
+<li>buttons respond to both enter and space keys</li>
+<li>links respond to the enter key only</li>
+</ul>
+</li><li><p>
+divs, spans, and most other elements have no explicit keyboard support, even when they can accept keyboard focus.
+An easy thing to do to support these elements is to catch keydown events for a set of keys you want to support (usually enter and space), then immediately fire a click event at the element.
+You can thus use one simple handler to add keyboard support to these elements, and keep all common code in click handlers.
+</p></li><li><p>
+Input elements do have implicit keyboard support and similar to links and buttons will implicitly generate click events.
+<ul>
+<li>similar to buttons, checkbox inputs respond to both enter and space keys when screen reader is running</li>
+<li>when no screen reader is running, only space generates a click event</li>
+<li>text and other types of input controls do have keyboard support, but it is not exercised here</li>
+</ol>
+
+<hr>
+<div id="test">
+<p><button id="b">button with no explicit keyboard handler</button></p>
+<p><a href="#" id="l">link with no explicit keyboard handler</a></p>
+
+<p><span id="s" tabindex="0">span with no explicit keyboard handler</span></p>
+<p><span id="skb" tabindex="0">span with explicit keyboard handler</span></p>
+
+<p><input type="checkbox" placeholder="checkbox with no explicit keyboard support"></p>
+<p><input type="text" placeholder="text input with no explicit keyboard support"></p>
+</div>
+
+<script>
+const speech = window.speechSynthesis;
+speak("Keyboard test ready.");
+
+$("body").addEventListener("focusin", speakControl);
+$("body").addEventListener("click", speakOnClick);
+$("#skb").addEventListener("keydown", speakOnKeydown);
+$("#pkb").addEventListener("keydown", speakOnKeydown);
+
+function speakControl (e) {
+speak(`${getControlName(e.target)}, ${getControlValue(e.target)}`);
+} // speakControl
+
+function getControlName (x) {
+if (!x.matches) return "";
+if (x.matches("a")) return "link";
+else if (x.matches("input")) return x.type;
+else return "";
+} // getControlName
+
+function getControlValue (x) {
+if (!x.matches) return "";
+if (x.matches("input")) {
+return `${x.getAttribute("placeholder")}, ${x.type === "checkbox"? (x.checked? "checked" : "unchecked") : x.value}`;
+} else {
+return x.textContent;
+} // if
+
+} // getControlValue
+
+function speakOnClick (e) {
+speak(`Got click on ${getControlValue(e.target)}`);
+} // speakOnClick
+
+function speakOnKeydown (e) {
+if (e.key === "Enter" || e.key === " ") {
+speak(`got ${e.key === " "? "space key" : e.key} on ${e.target.textContent}`);
+e.target.click();
+} // if
+} // speakOnKeydown
+
+
+function speak (text) {
+const utterance = new SpeechSynthesisUtterance(text);
+  speech.speak(utterance);
+} // speak
+
+function $ (selector, context = document) {
+return context.querySelector(selector);
+} // $
+
+
+</script>
+
+</body>
+</html>
