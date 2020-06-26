@@ -1,0 +1,75 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Table sort test</title>
+</head>
+<body> 
+<h1>Test</h1>
+
+<table>
+<thead><tr>
+<th aria-sort="ascending"><button>index</th>
+<th><button>random</th>
+</tr></thead>
+<tbody></tbody>
+</table>
+
+<script>
+$("table thead").addEventListener("click", e => sortColumn(e.target));
+generate(10, $("table tbody"));
+
+function sortColumn (element) {
+if (element.parentElement.matches("th")) {
+const th = element.parentElement;
+const columnIndex = Array.from(th.parentElement.children)
+.indexOf(th);
+const rows = Array.from($$("table tbody tr"));
+rows.sort((a, b) => compare(_valueOf(a.children[columnIndex]),  _valueOf(b.children[columnIndex])));
+$("table tbody").innerHTML = "";
+rows.forEach(tr => $("table tbody").appendChild(tr));
+
+$("th[aria-sort]", th.parentElement).removeAttribute("aria-sort");
+th.setAttribute("aria-sort", "ascending");
+} // if
+
+function compare (a, b) {
+if (a === b) return 0;
+else if (a < b) return -1;
+else return 1;
+} // compare
+
+function _valueOf (cell) {
+return Number(cell.textContent);
+} // _valueOf
+} // sortColumn
+
+function generate (count, element) {
+for (let i=0; i<count; i++) {
+element.appendChild(generateRow(i, generateRandomInteger(1, count)));
+} // for
+
+function generateRow (index, data) {
+const tr = document.createElement("tr");
+tr.innerHTML = `<td>${index}</td><td>${data}</td>`;
+return tr;
+r;
+} // generateRow
+} // generate
+
+function generateRandomInteger (a, b) {
+return Math.random()*Math.max(a,b) + Math.min(a,b);
+} // generateRandomInteger
+
+function $ (selector, context = document) {
+return context.querySelector(selector);
+} // $
+
+function $$ (selector, context = document) {
+return context.querySelectorAll(selector);
+} // $$
+
+</script>
+
+</body>
+</html>
