@@ -1,5 +1,4 @@
 
-_Note: this requires the webspeech API!_
 
 ## Purpose
 
@@ -37,6 +36,8 @@ Given the following tree with focus on "outer", pressing enter first moves focus
 
 
 ## How to Use the Test Program
+
+_Note: this requires the webspeech API, available in current versions of Firefox!_
 
 See link below to run the test.
 
