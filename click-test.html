@@ -7,85 +7,53 @@
 <body>
 <h1>Firefox Click Test</h1>
 
-<div id="test1" tabindex="0">
-<p>Some dummy text,
-<button id="dummy">a dummy button</button>,
-and more text.
-</p></div>
+<div id="status" role="status"></div>
 
+<select id="id" autofocus><option>
+outer
+</option><option>
+inner
+</option><option>
+innermost
+</option></select>
 
-<div id="test2" tabindex="0">
-<div id="child-1" >
-<div id="child-1.1">child 1.1</div>
-<div id="child-1.2">child 1.2</div>
-</div><!-- .result-container -->
+<div id="outer">
+<div id="inner">
+<div id="innermost">
+... some content ...
+</div>
+</div>
 </div>
 
 <script>
-const speech = window.speechSynthesis;
-speak("Keyboard test ready.");
-const results = document.querySelector("#results");
-const message = document.querySelector("#message");
+const id = document.querySelector("#id");
+id.value = "outer";
+setId(id.value);
 
+id.addEventListener("change", e => setId(e.target.value));
+document.querySelector(`#${id.value}`).addEventListener("click", e => reportTarget(e.target, " clicked"));
+document.querySelector(`#${id.value}`).addEventListener("focusin", e => reportTarget(e.target, " focused"));
 
-document.addEventListener("focusin", e => {
-speak(`${getControlName(e.target)}, ${getControlValue(e.target)}`);
-}); // focus
+function setId (id) {
+document.querySelector("[tabindex]")?.removeAttribute("tabindex");
+element = document.querySelector(`#${id}`);
 
-//results.addEventListener("click", clickHandler);
-document.addEventListener("click", clickHandler);
-
-function clickHandler (e) {
-speak(`click on ${getControlName(e.target)}, ${getControlValue(e.target)}`);
-} // clickHandler
-
-
-document.addEventListener("keydown", e => {
-if (e.key === "Enter" && !e.shiftKey && !e.altKey) {
-speak(`keydown ${e.key} on ${e.target.id || e.target.className}`);
-e.preventDefault();
-e.target.click();
+if (element) {
+element.tabIndex = 0;
+status(`element with id of ${id} now has tabIndex of 0`);
+} else {
+status(`there is no element with ${id} in this document.`);
 } // if
-}); // keydown
+} // setId
 
-function status (text, element) {
-//message.textContent = `${text} ${element.id || element.className}`;
-speak(`${text} ${element.id || element.className}`);
+function reportTarget (element, text) {
+status(`${element.id} ${text}.`);
+} // reportTarget
+
+function status (text) {
+document.querySelector("#status").textContent = text;
 } // status
 
-function speakControl (e) {
-speak(`${getControlName(e.target)}, ${getControlValue(e.target)}`);
-} // speakControl
-
-function getControlName (x) {
-let name = "";
-if (!x.matches) return "";
-if (x.matches("a")) name = "link";
-else if (x.matches("button")) name = "button";
-else if (x.matches("input")) name = x.type;
-else name = x.tagName;
-
-name += ` ${x.id} ${x.className}`;
-return name;
-} // getControlName
-
-function getControlValue (x) {
-if (!x.matches) return "";
-if (x.matches("input")) {
-return `${x.getAttribute("placeholder")}, ${x.type === "checkbox"? (x.checked? "checked" : "unchecked") : x.value}`;
-} else {
-return x.textContent;
-} // if
-} // getControlValue
-
-function speak (text) {
-const utterance = new SpeechSynthesisUtterance(text);
-  speech.speak(utterance);
-} // speak
-
-function $ (selector, context = document) {
-return context.querySelector(selector);
-} // $
 </script>
 
 </body>
