@@ -2,7 +2,7 @@
 
 See instructions below.
 
-- run: https://RichCaloggero/github.io/test/click-test.html
+- run: https://RichCaloggero.github.io/test/click-test.html
 
 
 ## Purpose
