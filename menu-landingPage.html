@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="">
+<head>
+<meta charset="utf-8">
+<title>Nav Menu Test</title>
+
+<style>
+.menu, .submenu {list-style-type: none;}
+.submenu {display: none;}
+.submenu.open {display: block;}
+
+</style>
+</head>
+<body>
+<div><a href="#">Home</a></div>
+<nav id="main-nav" aria-label="main">
+<ul class="menu"><li class="menu-item">
+<a id="about" href="about.html">About Us</a>
+<button aria-expanded="false" aria-haspopup="true" aria-labelledby="about">&darr;</button>
+
+<ul class="submenu"><li class="menu-item">
+<a href="#">Graduates</a>
+</li><li class="menu-item">
+<a href="#">Undergraduates</a>
+<button aria-haspopup="true" aria-expanded="false">&darr;</button>
+
+<ul class="submenu"><li class="menu-item">
+<a href="#">item 1</a>
+</li><li>
+<a href="#">item 2</a>
+</li></ul>
+</li></ul>
+
+</li><li class="menu-item">
+<a href="contact.html">Contact</a>
+</li></ul>
+</nav>
+
+<main>
+<h1>Page Title</h1>
+
+<p>... page body text ...</p>
+</main>
+
+<script>
+document.querySelector("#main-nav").addEventListener("click", e => {
+const trigger = e.target;
+const menu = trigger.nextElementSibling;
+
+if (!trigger.hasAttribute("aria-haspopup")) return;
+toggleMenu(menu, trigger);
+if (!menu.classList.contains("open")) closeAll(menu);
+}); // click
+
+function toggleMenu (menu, trigger) {
+const expanded = trigger.getAttribute("aria-expanded");
+menu.classList.toggle("open");
+trigger.setAttribute("aria-expanded", expanded === "true"? "false" : "true");
+} // toggleMenu
+
+function closeAll (menu) {
+menu.querySelectorAll("[aria-haspopup=true]").forEach(item => item.click());
+} // closeAll
+</script>
+
+
+</body>
+</html>
