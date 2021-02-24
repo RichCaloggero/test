@@ -182,6 +182,8 @@ if ($("ul", branch)) {
 branch.setAttribute("aria-expanded", "false");
 if (menu) branch.setAttribute("aria-haspopup", "true");
 } // if
+
+if ($("[href]", branch)) branch.setAttribute("aria-roledescription", "has link");
 }); // forEach branch
 
 return initTreeNavigation(root);
@@ -201,6 +203,7 @@ case "ArrowRight": return focusNode(down(currentNode));
 case "ArrowLeft": return focusNode(up(currentNode));
 
 case "Enter": return activateNode(currentNode);
+case "Escape": return closeAll(root);
 
 default: return true;
 } // switch
@@ -237,6 +240,11 @@ function activateNode (node) {
 const link = $("[href]", node);
 if (link) location = link.getAttribute("href");
 } // activateNode
+
+function closeAll (root) {
+$$(`[role=${roles.sub}].open`, root).forEach(sub => sub.removeAttribute("open"));
+return focusNode(root.firstElementChild);
+} // closeAll
 
 function isLeafNode (node) {return node && !node.hasAttribute("aria-expanded");}
 } // initTreeNavigation
