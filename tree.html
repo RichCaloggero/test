@@ -171,6 +171,7 @@ initTree($("nav > ul"), "menu");
 function initTree (root, menu = false) {
 const roles = setRoles(menu);
 root.setAttribute("role", roles.top);
+setTimeout(() => root.insertAdjacentHTML("afterend", '<div role="alert">navigate with arrows, follow links with enter</div>'), 50);
 
 $$("a, button, [tabindex]", root).forEach(x => x.setAttribute("tabindex", "-1"));
 
