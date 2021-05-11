@@ -1,0 +1,85 @@
+<!doctype html>
+<html>
+<meta charset="utf-8">
+<title>Test</title>
+</head>
+<body>
+<h1>Test</h1>
+
+<div class="checkbox-list" role="application" aria-roledescription="listbox">
+<ul><li>
+<label>item 1 <input type="checkbox"></label>
+</li><li>
+<label>item 2 <input type="checkbox"></label>
+</li><li>
+<label>item 3 <input type="checkbox"></label>
+</li></ul>
+</div>
+
+<script>
+class CheckboxList {
+constructor (element) {
+const l = element.querySelector("ul, ol	");
+l.addEventListener("keydown", this.handleKeys);
+l.addEventListener("focusin", this.setInitialFocus);
+l.addEventListener("change", this.handleUpdate);
+} // constructor
+
+setInitialFocus (e) {
+const list = e.currentTarget;
+list.querySelectorAll("input").forEach(x => x.setAttribute("tabindex", "-1"));
+list.querySelector("input").setAttribute("tabindex", "0");
+} // setInitialFocus
+
+
+handleKeys (e) {
+const commands = {
+up: item => (item.closest("li")?.previousElementSibling.querySelector("input") || item).focus(),
+down: item => (item.closest("li")?.nextElementSibling.querySelector("input") || item).focus()
+}; // commands
+
+const command = commands[getKey(e.key)];
+if (!command) {
+return true;
+} // if
+
+execute(command, e.target);
+
+function execute (command, target) {
+console.log(command, target);
+command(target);
+} // execute
+
+function getKey (key) {
+key = key.toLowerCase();
+const keys = {
+arrowup: "up", arrowdown: "down", " ": "space"
+};
+
+return keys[key] || key;
+} // getKey
+} // handleKeys
+
+
+
+handleUpdate (e) {
+const list = e.currentTarget;
+const inputs = [...list.querySelectorAll("input")];
+
+this.value = inputs.map(x => x.checked);
+console.log("value: ", this.value);
+} // handleUpdate
+} // class CheckboxList
+
+checkboxList = new CheckboxList(document.querySelector(".checkbox-list"));
+console.log("done.");
+
+
+</script>
+
+
+
+
+
+</body>
+</html>

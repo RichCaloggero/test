@@ -1,0 +1,84 @@
+<!doctype html>
+<html>
+<meta charset="utf-8">
+<title>Test</title>
+</head>
+<body>
+<h1>Test</h1>
+
+<script>
+//console.log("ready.");
+
+function memoize (f) {
+console.log("entering memoize", f);
+const cache = new Map();
+
+return function () {
+const key = JSON.stringify(Array.from(arguments));
+//console.log("memoized function: ", f, key, arguments);
+
+return isCached(key)? getCache(key)
+: setCache(key, f.apply(f, Array.from(arguments)));
+}; // function
+
+function setCache (key, value) {
+cache.set(key,value);
+return value;
+} // setCache
+
+function getCache (key) {return cache.get(key);}
+
+function isCached (key) {return cache.has(key);}
+}; // memoized
+
+
+
+var fib = memoize(
+function (n) {
+return n < 2? n : (fib(n-1) + fib(n-2));
+});
+
+
+/*
+
+ Enhances functions with the capability of "Memoization".
+
+ Author: Luis Atencio
+ */
+
+/*"use strict";
+
+(function () {
+
+    Function.prototype.memoized = function () { // #A
+        var key = JSON.stringify(arguments); // #B
+        this._cache = this._cache || {};   // #C
+        var val = this._cache[key];  // #D
+//console.log("inside memoized with", key, this);
+
+        if (val === undefined || val === null) {
+            val = this.apply(this, arguments); // #E
+            this._cache[key] = val;  // #F
+        }
+        return val;
+    };
+
+    Function.prototype.memoize = function () {  // #G
+        var fn = this;
+//console.log("memoize: ", fn.length, fn);
+
+        if (fn.length === 0 || fn.length > 1) {
+            //console.log("returning ", fn);
+return fn; // #H
+        }
+//console.log("returning call to memoized function");
+        return function () {
+            return fn.memoized.apply(fn, arguments); // #I
+        };
+    };
+
+}).call(this);
+*/
+</script>
+</body>
+</html>
