@@ -20,9 +20,14 @@
 class CheckboxList {
 constructor (element) {
 const l = element.querySelector("ul, ol	");
-l.addEventListener("keydown", this.handleKeys);
-l.addEventListener("focusin", this.setInitialFocus);
-l.addEventListener("change", this.handleUpdate);
+l.addEventListener("keydown", this.handleKeys.bind(this));
+l.addEventListener("focusin", this.setInitialFocus.bind(this));
+l.addEventListener("change", this.handleUpdate.bind(this));
+
+this.inputs = [...l.querySelectorAll("input")];
+this.labels = this.inputs.map(input => input.labels[0].textContent);
+this.length = this.size = this.inputs.length;
+this.value = this.selected = this.selectedIndecies = [];
 } // constructor
 
 setInitialFocus (e) {
@@ -46,7 +51,6 @@ return true;
 execute(command, e.target);
 
 function execute (command, target) {
-console.log(command, target);
 command(target);
 } // execute
 
@@ -64,15 +68,14 @@ return keys[key] || key;
 
 handleUpdate (e) {
 const list = e.currentTarget;
-const inputs = [...list.querySelectorAll("input")];
 
-this.value = inputs.map(x => x.checked);
-console.log("value: ", this.value);
+this.value = this.inputs.map(x => x.checked);
+this.selected = this.labels.filter((x, i) => this.value[i]);
+this.selectedIndecies = this.value.map((x, i) => i).filter(x => this.value[x]);
 } // handleUpdate
 } // class CheckboxList
 
 checkboxList = new CheckboxList(document.querySelector(".checkbox-list"));
-console.log("done.");
 
 
 </script>
