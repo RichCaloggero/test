@@ -13,12 +13,11 @@ outline: green solid;
 <body>
 <h1>Transcript</h1>
 
-<p>This is meant to show how one can code transcripts similar to the edX interactive transcript without using links ("a" elements).The issue for screen reader users with the current implementation is that each link is announced, which means that attempting to read through the transcript via screen reader inserts the word "link" into the speech stream constantly, which makes reading tedious.
+<p>This is meant to show how one can code interactive transcripts to work with the keyboard as well as mouse.
+Here we use spans and in the javascript give them all tabindex="-1".
 </p><p>
-Here we use spans and in the javascript give them all tabindex="0".
 I've attempted to give them a focus outline, but since I can't see the effects of CSS via screen reader, I have no idea if it's helpful.
-SImilarly, I've also tried to give each a cursor via CSS so that mouse users know they can click on things.
-All of these effects you get for free when using anchors.
+Similarly, I've also tried to give each a cursor via CSS so that mouse users know they can click on things.
 </p>
 <hr>
 <h2>Transcript</h2>
@@ -39,7 +38,7 @@ All of these effects you get for free when using anchors.
 <script>
 const transcript = document.querySelector(".transcript");
 const phrases = Array.from(document.querySelectorAll(".transcript p > span"));
-phrases.forEach(x => x.setAttribute("tabindex", "0"));
+phrases.forEach(x => x.setAttribute("tabindex", "-1"));
 
 transcript.addEventListener("keyup", e => {
 if (e.key === "Enter") {e.preventDefault(); e.target.click();}
