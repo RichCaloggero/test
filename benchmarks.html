@@ -1,0 +1,79 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Test</title>
+</head>
+<body> 
+<h1>Test</h1>
+<div id="log" role="log"></div>
+
+<script>
+const a = [];
+const object = {};
+const count = 1000000;
+
+run (fill_push);
+run(entry_loop);
+run(entry_forEach);
+run(newArray_map);
+
+run(createLargeObject_loop);
+run(modifyObject_loop);
+run(modifyObject_forEach);
+run(newObject_map);
+
+function newObject_map () {
+const newObject = Object.fromEntries(
+Object.entries(object).map(e => [e[0], double(e[1])])
+); // fromEntries
+} // newObject_map 
+
+function newArray_map () {
+const newArray = a.map(x => double(x));
+} // newArray_map
+
+function fill_push () {
+for (let i=0; i<count; i++) a.push(i);
+} // fill_push
+
+function entry_loop () {
+for (let i=0; i<a.length; i++) a[i] = double(a[i]);
+} // entry_loop
+
+function entry_forEach () {
+a.forEach((x, i) => a[i] = double(x));
+} // entry_forEach
+
+function createLargeObject_loop () {
+for (let i=0; i<count; i++) object[`double-${i}`] = double(i);
+} // createLargeObject_loop
+
+function modifyObject_loop () {
+for (let [key, value] of Object.entries(object)) object[key] = double(value);
+} // modifyObject_loop
+
+function modifyObject_forEach () {
+[...Object.entries(object)].forEach(e => object[e[0]] = double(e[1]));
+} // modifyObject_forEach
+
+function double (value) {return value*2;}
+
+
+
+function run (_function) {
+const t = performance.now();
+_function ();
+report(performance.now() - t, _function.name);
+} // run
+
+function report (t, name) {
+const p = document.createElement("p");
+p.textContent = `${name}: ${t} milliseconds.`;
+document.querySelector("#log").appendChild(p);
+} // report
+
+</script>
+
+</body>
+</html>
