@@ -1,0 +1,7 @@
+# JS Tips
+
+
+Object parameters let us pass in more argument with adding more arguments as we can pass them in as properties and destructure them in our function.
+If we have lots of primitive values that repeat, we can put them all in one object. Then we can use the object to check for those items before setting the value to make sure that they’re valid.
+Finally, we can set boolean expressions into functions or variables, and we can do the same thing for callbacks to make them clear.
+
