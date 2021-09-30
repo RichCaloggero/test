@@ -1,0 +1,73 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Test</title>
+</head>
+<body>
+<h1>Testing S</h1>
+
+<fieldset ><legend><h2>Polar</h2></legend>
+<label>radius: <input type="number" id="r"></label>
+<label>angle: <input type="number" id="a"></label>
+</fieldset>
+
+<fieldset ><legend><h2>Cartesian</h2></legend>
+<label>x: <input type="number" id="x"></label>
+<label>y: <input type="number" id="y"></label>
+</fieldset>
+
+<div  id="message" role="log"></div>
+
+
+
+<script src="S.js"></script>
+<script>
+S.root(() => {
+const _r = ui("r");
+const _a = ui("a");
+const _x = ui("x");
+const _y = ui("y");
+const r = S.value(0);
+const a = S.value(0);
+const x = S.value(0);
+const y = S.value(0);
+
+_r.addEventListener("change", e => r(e.target.value), message());
+_a.addEventListener("change", e => a(e.target.value), message());
+_x.addEventListener("change", e => x(e.target.value), message());
+_y.addEventListener("change", e => y(e.target.value), message());
+
+S(() => {
+_a.value = Math.atan2(y(), x());
+_r.value = Math.sqrt(Math.pow(x(),2) + Math.pow(y(),2));
+
+message("updated polar");
+});
+
+S(() => {
+_x.value = r() * Math.cos(a());
+_y.value = r() * Math.sin(a());
+
+message("updated cartesian");
+});
+
+
+});
+
+function message(text) {
+if (!text) ui("message").innerHTML = "";
+else ui("message").insertAdjacentHTML("beforeEnd", `<p>${text}</p>`);
+} // message
+
+function ui(element) {
+return (
+element instanceof HTMLElement? element
+: document.getElementById(element)
+); // return
+} // ui
+ 
+</script>
+
+</body>
+</html>

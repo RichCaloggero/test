@@ -1,0 +1,47 @@
+<!doctype html><html><head><title>Menu behavior</title></head><body> 
+<h2 id="setup">Setup</h2>
+<p>Consider the following navigation.</p>
+<p>The word &quot;page&quot; in item title means that it navigates to a separate page when clicked. If the item is followed by another list, it means that this list is shown on hover, hidden otherwise.</p>
+<ul>
+<li>people page<ul>
+<li>job board page</li>
+<li>employee page<ul>
+<li>directory page</li>
+</ul>
+</li>
+<li>hr page</li>
+<li>payroll page</li>
+</ul>
+</li>
+<li>campus housing page</li>
+</ul>
+<h2 id="initial-conditions">Initial conditions</h2>
+<p>Always begin each test with focus on &quot;people page&quot;.</p>
+<h2 id="disclosure-menu-pattern">Disclosure menu pattern</h2>
+<h3 id="keyboard-behavior">Keyboard behavior</h3>
+<ul>
+<li>enter: follows the link</li>
+<li>tab: focus lands on the menu toggle (often shown as a down arrow)<ul>
+<li>enter or space: toggles the attached submenu</li>
+<li>tab: when submenu is showing sets focus to &quot;job board page&quot;</li>
+<li>tab: when submenu hidden, tab sets focus on &quot;campus housing page&quot;</li>
+</ul>
+</li>
+<li>tab: with focus on &quot;job board page&quot; sets focus to &quot;employee page&quot;</li>
+</ul>
+<h3 id="screen-reader">Screen reader</h3>
+<ul>
+<li>screen reader says &quot;people link&quot;</li>
+<li>enter: follows the link</li>
+<li>tab: sets focus to menu toggle (announced as &quot;people submenu, collapsed&quot; when hidden, &quot;people submenu, expanded&quot; when showing)<ul>
+<li>enter or space: toggles the attached submenu (menu title along with new state is announced)</li>
+<li>tab: when submenu is showing sets focus to &quot;job board page&quot; (&quot;job board, link&quot; is announced)</li>
+<li>tab: when submenu hidden sets focus to &quot;campus housing page&quot; (&quot;campus housing, link&quot; is announced)</li>
+</ul>
+</li>
+<li>tab: with focus on &quot;job board page&quot;,  sets focus to &quot;employee page&quot; (&quot;employee submenu, collapsed&quot; is announced)</li>
+</ul>
+
+</body>
+</html>
+

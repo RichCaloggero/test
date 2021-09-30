@@ -5,7 +5,56 @@
 <title>Test</title>
 </head>
 <body>
-<h1>An embedded YouTube video</h1>
+<h1>NVDA focus shifting - be sure "automatically set system focus to focusable elements" to off</h1>
+
+<h2>Simple test case (supplied by James Teh)</h2>
+
+<div tabindex="-1" onfocus="stuff.remove();">
+<button>a</button>
+
+<div id="stuff">
+<button>b</button>
+<h1>c</h1>
+</div>
+</div>
+
+<h2>YouTube adds the item back again</h2>
+
+This effectively prevents a NVDA user with "automatically set system focus to focusable elements" set to on from reading the container (YouTube iFrame) with arrow keys; moving through with tab, or setting "automatically set system focus to focusable elements" to off mitigates...
+
+
+<div id="outer" tabindex="-1">
+<div id="inner" tabindex="-1">
+<button>a</button>
+
+<div id="stuff">
+<button>b</button>
+<h3>c</h3>
+</div>
+</div>
+</div>
+
+<script>
+const outer = document.querySelector("#outer");
+const inner = document.querySelector("#inner");
+const html = inner.innerHTML;
+
+inner.addEventListener("focus", remove);
+
+function remove () {
+document.querySelector("#stuff").remove();
+//outer.focus();
+inner.innerHTML = html;
+} // remove
+
+function restore () {
+container.innerHTML = html;
+} // restore
+
+</script>
+
+
+<hr><h2>An embedded YouTube video (original discovery of this behavior)</h2>
 
 <iframe width="560" height="315"
 src="https://www.youtube.com/embed/1nom9fGfb0o"
@@ -13,6 +62,7 @@ title="YouTube video player"
 frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
 allowfullscreen>
 </iframe>
+
 
 </body>
 </html>
