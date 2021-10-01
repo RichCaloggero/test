@@ -1,0 +1,94 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Test</title>
+</head>
+<body>
+<h1>Testing S</h1>
+<label>Number: <input id="numeric" type="range" min="-1" max="1" step="0.1"></label>
+<button accesskey="t" id="click-me">Click Me</button>
+<button accesskey="c" id="clear">clear</button>
+<div aria-label="status" id="status" role="log"></div>
+
+
+<script src="s.js"></script>
+<script>
+S.root(() => {
+const buttonState = createBooleanSignal(ui("click-me"));
+const isPressed = S.data(buttonState() === true);
+const clear = createClickSignal(ui("clear"));
+const numbers = createNumericSignal(ui("numeric"));
+const e = createEventSignal(ui("numeric"));
+
+S(() => e() && message(`event: ${e().type} ${e().target.value}`));
+S(() => message(`value: ${numbers()}`));
+S(() => message(`state: ${buttonState()}`));
+S(() => message(`pressed: ${isPressed()}`));
+
+S(() => {
+clear();
+ui("status").innerHTML = "";
+});
+
+}); // root
+
+function createEventSignal (element, events = ["click", "change"]) {
+const signal = S.data(null);
+for (let event of events) {
+element.addEventListener(event, e => signal(e));
+} // for
+return signal;
+} // createEventSignal
+
+function createClickSignal (element) {
+return createEventSignal(element, ["click"]);
+} // createClickSignal
+
+function createNumericSignal (element) {
+if (element.type !== "number" && element.type !== "range") throw new Error("element must have type number or range");
+const events = createEventSignal(element, ["change"]);
+ const numbers = S.value(0);
+S.on(events, () => numbers(events()? Number(events().target.value) : 0));
+return numbers;
+} // createNumericSignal
+
+function createBooleanSignal (button) {
+if (button.tagName.toLowerCase() !== "button") throw new Error("argument must be a button element");
+button.setAttribute("aria-pressed", "false");
+button.setAttribute("role", "button");
+const events = createEventSignal(button, ["click"]);
+const values = S.value(false);
+
+S.on(events, () => {
+if (events()) {
+toggleState(events().target);
+values(getState(events().target));
+} // if
+});
+return values;
+
+function toggleState (element) {setState(element, !getState(element));}
+function setState (element, state) {element.setAttribute("aria-pressed", state? "true" : "false");}
+function getState (element) {return element.getAttribute("aria-pressed") === "true";}
+} // createBooleanSignal
+
+
+function message(text) {
+ui("status").insertAdjacentHTML("beforeEnd", `<p>${text}</p>`);
+} // message
+
+function ui(element) {
+return (
+element instanceof HTMLElement? element
+: document.getElementById(element)
+); // return
+} // ui
+
+function filterSignal (f, s) {return S.value(f(s()));}
+
+
+</script>
+
+</body>
+</html>

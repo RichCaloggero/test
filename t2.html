@@ -34,35 +34,37 @@ const a = S.value(0);
 const x = S.value(0);
 const y = S.value(0);
 
-_r.addEventListener("change", e => r(e.target.value));
-_a.addEventListener("change", e => a(e.target.value));
-_x.addEventListener("change", e => x(e.target.value));
-_y.addEventListener("change", e => y(e.target.value));
+_r.addEventListener("change", e => get(Number(e.target.value), r, "r"));
+_a.addEventListener("change", e => get(Number(e.target.value), a, "a"));
+_x.addEventListener("change", e => get(Number(e.target.value), x, "x"));
+_y.addEventListener("change", e => get(Number(e.target.value), y, "y"));
 ui("clear").addEventListener("click", () => ui("message").innerHTML = "");
 
 S(() => {
+message("converting to polar");
 const [_r, _a] = toPolar(x(), y());
 r(_r);
 a(_a);
 });
 
 S(() => {
+message("converting to cartesian");
 const [_x, _y] = toCartesian(r(), a());
 x(_x);
 y(_y);
 });
 
-S(() => {
-probe(r, "r");
-probe(a, "a");
+//S(() => {
+//probe(r, "r");
+//probe(a, "a");
 probe(x, "x");
 probe(y, "y");
-});
+//});
 
-S(() => _r.value = r());
-S(() => _a.value = a());
-S(() => _x.value = x());
-S(() => _y.value = y());
+S(() => write(r(), _r, "r"));
+S(() => write(a(), _a, "a"));
+S(() => write(x(), _x, "x"));
+S(() => write(y(), _y, "y"));
 
 });
 
@@ -80,12 +82,22 @@ _r * Math.sin(_a)
 ];
 } // toCartesian
 
+function get (value, signal, name) {
+message(`get: ${name} = ${typeof(value)} ${value}`);
+signal(value);
+} // get
+
+function write (value, element, name) {
+element.value = value;
+message(`write: ${typeof(value)} ${value} to ${name}`);
+} // write
+
 function probe (signal, name) {
 S(() => {
 message(`probe: ${name} = ${signal()}`);
 return signal;
 });
-} // update
+} // probe
 
 function message(text) {
 ui("message").insertAdjacentHTML("beforeEnd", `<p>${text}</p>`);
