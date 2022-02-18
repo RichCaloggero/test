@@ -1,0 +1,87 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Test</title>
+</head>
+<body>
+<h1>Testing</h1>
+<div>
+<label>Column labels (separate with commas): <input type="text" id="column-labels"></label>
+<br><label>Row labels (separate with commas): <input type="text" id="row-labels"></label>
+<label>Verbose labeling: <input id="verbose-label" type="checkbox"></label>
+ <br><button id="go">Generate</button>
+</div>
+
+<div id="table">
+</div>
+
+<script>
+$("#go").addEventListener("click", () => {
+const columnLabels = $("#column-labels").value.split(",").map(x => x.trim());
+const rowLabels = $("#row-labels").value.split(",").map(x => x.trim());
+$("#table").innerHTML = "";
+$("#table").appendChild(generate(rowLabels, columnLabels));
+});
+
+function generate (rowLabels, columnLabels) {
+console.log(`generating ${rowLabels.length}X${columnLabels.length} table:`);
+const table = document.createElement("table");
+
+for (r=0; r<=rowLabels.length; r++) {
+if (r === 0) {
+table.appendChild(createHeaderRow(columnLabels));
+
+} else {
+table.appendChild(createDataRow(rowLabels[r-1], r, columnLabels.length+1, $("#verbose-label").checked));
+} // if
+} // for
+
+return table;
+} // generate
+
+function createHeaderRow (data) {
+const row = document.createElement("tr");
+["", ...data].forEach((content, c) => {
+const cell = document.createElement("th");
+if (content) cell.textContent = content;
+cell.setAttribute("id", `id-0-${c}`);
+row.appendChild(cell);
+});
+
+return row;
+} // createHeaderRow
+
+function createDataRow (rowLabel, rowNumber, cellCount, verboseLabel) {
+const row = document.createElement("tr");
+
+for (let c=0; c < cellCount; c++) {
+let cell;
+if (c === 0) {
+cell = document.createElement("th");
+cell.textContent = rowLabel;
+cell.setAttribute("id", `id-${rowNumber}-0`);
+} else {
+cell = document.createElement("td");
+const input = document.createElement("input");
+const columnLabel = `id-0-${c}`;
+const rowLabel = `id-${rowNumber}-0`;
+input.setAttribute("aria-labelledby",
+(c === 1 || verboseLabel)? `${rowLabel} ${columnLabel}`
+: columnLabel
+); // setAttribute
+cell.appendChild(input);
+} // if
+
+row.appendChild(cell);
+} // for
+
+return row;
+} // createDataRow
+
+function $ (s, c = document) {return c.querySelector(s);}
+
+</script>
+
+</body>
+</html>

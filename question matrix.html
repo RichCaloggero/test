@@ -1,0 +1,51 @@
+<doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Question Matrix</title>
+</head>
+<body>
+<h1>Question Matrix</h1>
+
+<p>To make these kind of tables accessible::</p>
+ <ul><li>
+provide both row and column header cells with ID attributes.
+</li><li>
+Add aria-labelledby to each radio button referencing the appropriate column header's ID.
+</li><li>
+Be sure each radio button has an name attribute; this connects each button in each row together and allows arrow keys to select each in turn.
+</li><li>
+Finally, the first radio button in each row should have the ID of the row header cell as the first ID reference in it's aria-labelledby value.
+</li></ul>
+
+<p><strong>Noe: please do not link all radio buttons in each row to the row header via aria-labelledby; this will cause the screen reader to repeat the question (contents of row header cell) on each tab press, which would be extremely verbose and make the widget virtually unusable!</strong></p>
+
+Here is a simplified example:
+
+<table>
+<summary>Navigate with table commands or via tab..."</summary>
+<tr>
+<th></th>
+<th id="a1">strongly disagree</th>
+<th id="a2">somewhat disagree</th>
+<th id="a3">neither agree nor disagree</th>
+<th id="a4">somewhat agree</th>
+<th id="a5">strongly agree</th>
+</tr><tr>
+<th id="q1">question 1</th>
+<td><input aria-labelledby="q1 a1" name="q1-answer" type="radio" ></td>
+<td><input aria-labelledby="a2" name="q1-answer" type="radio" ></td>
+<td><input aria-labelledby="a3" name="q1-answer" type="radio"></td>
+<td><input aria-labelledby="a4" name="q1-answer" type="radio" ></td>
+<td><input aria-labelledby="a5" name="q1-answer" type="radio" ></td>
+</tr><tr>
+<th id="q2">question 2</th>
+<td><input aria-labelledby="q2 a1" name="q2-answer" type="radio" ></td>
+<td><input aria-labelledby="a2" name="q2-answer" type="radio" ></td>
+<td><input aria-labelledby="a3" name="q2-answer" type="radio"></td>
+<td><input aria-labelledby="a4" name="q2-answer" type="radio" ></td>
+<td><input aria-labelledby="a5" name="q2-answer" type="radio" ></td>
+</tr></table>
+
+</body>
+</html>
