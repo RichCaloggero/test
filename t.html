@@ -5,7 +5,35 @@
 <title>Testing git again</title>
 </head>
 <body>
-<a href="./t2.html">click here to continue</a>
+
+<script>
+const append(document.body,
+h("heading tet"),
+div("some text in a div"),
+link("https://www.mozilla.com", img("img.png", "image inside link")),
+p("--end--")
+); // append to body // end of elements
+
+function html (name, ...rest) {
+const element = document.createElement(name);
+return append (element, ...rest);
+} // html
+
+function append (element, ...elements) {
+elements = elements.flat(99);
+elements.forEach(child => element.appendChild(child));
+return element;
+} // append
+
+/// element types
+
+function p (...rest) {return html("p", ...rest);}
+function div (...rest) {return html("div", ...rest);}
+function span (...rest) {return html("span", ...rest);}
+
+
+
+</script>
 
 </body>
 </html>
