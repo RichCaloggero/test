@@ -1,37 +1,48 @@
-<!doctype html>
-<html>
-<head>
+<!DOCTYPE html>
+<html><head>
 <meta charset="utf-8">
-<title>Testing git again</title>
+<title>test</title>
 </head>
 <body>
+<h1>Testing</h1>
+
+<button id="update-r1">Update r1</button>
+<button id="clear-r1">clear r1</button>
+<br>
+<button id="update-r2">Update r2</button>
+<button id="clear-r2">clear r2</button>
+
+<hr>
+<h2>r1:</h2>
+<div id="r1">
+<span aria-relevant="text" aria-live="polite" class="count"></span>
+</div>
+
+<h2>r2:</h2>
+<div id="r2" aria-live="polite" aria-atomic="true">
+<span role="status" class="count"></span> items
+</div>
 
 <script>
-const append(document.body,
-h("heading tet"),
-div("some text in a div"),
-link("https://www.mozilla.com", img("img.png", "image inside link")),
-p("--end--")
-); // append to body // end of elements
+const r1 = document.querySelector("#r1");
+const r2 = document.querySelector("#r2");
+const updateR1 = document.querySelector("#update-r1");
+const updateR2 = document.querySelector("#update-r2");
 
-function html (name, ...rest) {
-const element = document.createElement(name);
-return append (element, ...rest);
-} // html
+updateR1.addEventListener("click", () => update(r1));
+updateR2.addEventListener("click", () => update(r2));
 
-function append (element, ...elements) {
-elements = elements.flat(99);
-elements.forEach(child => element.appendChild(child));
-return element;
-} // append
+function update (liveRegion) {
+liveRegion.querySelector(".count").textContent = Math.floor(Math.random() * 5);
+} // update
 
-/// element types
+function clear (liveRegion) {
+liveRegion.innerHTML = "";
+} // clear
 
-function p (...rest) {return html("p", ...rest);}
-function div (...rest) {return html("div", ...rest);}
-function span (...rest) {return html("span", ...rest);}
-
-
+function $(s, c = document) {
+return c.querySelector(s);
+} // $
 
 </script>
 

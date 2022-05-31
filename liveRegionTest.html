@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>test</title>
+</head>
+<body>
+<h1>Fake search to test live regions</h1>
+
+<label>organization search:
+<input type="text" class="name">
+</label>
+<div aria-live="polite"   aria-atomic="true" class="status"></div>
+
+<script>
+data = ["item one", "item two", "item three", "item four", "item five (last)"];
+
+document.querySelector(".name").addEventListener("input", e => {
+const found = data.filter(x => x.includes(e.target.value));
+document.querySelector(".status").textContent = `${found.length} results.`;
+});
+</script>
+
+</body>
+</html>
