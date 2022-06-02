@@ -6,18 +6,49 @@
 <body>
 <h1>Fake search to test live regions</h1>
 
-<label>organization search:
-<input type="text" class="name">
+<label>Markup:
+<input type="text" class="markup" value='role="alert" aria-atomic="true"' accesskey="m">
 </label>
-<div role="status" class="status"></div>
+<label>innerHTML:
+<input type="checkbox" class="innerHTML">
+</label>
+
+<br><label>organization search:
+<input type="text" class="query">
+</label>
+
+<div aria-live="polite" aria-atomic="true" class="status">
+</div>
 
 <script>
-data = ["item one", "item two", "item three", "item four", "item five (last)"];
+const data = ["one", "two", "three", "four", "five"];
 
-document.querySelector(".name").addEventListener("input", e => {
+const query = document.querySelector(".query");
+const markup = document.querySelector(".markup");
+const innerHTML = document.querySelector(".innerHTML");
+
+query.addEventListener("input", e => {
 const found = data.filter(x => x.includes(e.target.value));
-document.querySelector(".status").textContent = `${found.length} results.`;
+//document.querySelector(".status").firstChild.data = `${found.length} results.`;
+statusMessage(`${found.length} results.`, innerHTML.checked);
 });
+
+markup.addEventListener("blur", e => applyMarkup(e.target.value));
+
+function statusMessage (text, innerHTML) {
+if (innerHTML) {
+status().innerHTML = text;
+} else {
+if (status().firstChild.nodeType !== 3) status().innerHTML = "\n";
+status().firstChild.data = text;
+} // if
+} // statusMessage
+
+function applyMarkup (markup) {
+status().outerHTML = `<div class="status" ${markup}>\n</div>`;
+} // applyMarkup
+
+function status () {return document.querySelector(".status");}
 </script>
 
 </body>
