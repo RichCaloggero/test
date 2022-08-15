@@ -1,0 +1,36 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Browser Hotkeys</title>
+</head>
+<body> 
+<h1>Browser Hotkey Test</h1>
+
+<div id="posts">
+<h2>
+<a id="top-anchor" href="#top" tabindex="-1" accesskey="b">All Posts</a>
+<button id="define-hotkey">define hotkey</button>
+</h2><ul>
+<li><a href="#">post 1</a></li>
+<li><a href="#">post 2</a></li>
+<li><a href="#">post 3</a></li>
+<li><a href="#">post 4</a></li>
+<li><a href="#">post 5</a></li>
+<li><a href="#">post 6</a></li>
+<li><a href="#">post 7</a></li>
+<li><a href="#">post 8</a></li>
+<li><a href="#">post 9</a></li>
+<li><a href="#">post 10</a></li>
+</ul>
+</div>
+
+<script>
+document.querySelector("#posts #define-hotkey").addEventListener("click", e => {
+const hotkey = prompt("hot key (only first character is significant):");
+document.querySelector("#posts #top-anchor").setAttribute("accesskey", hotkey[0]);
+});
+</script>
+
+</body>
+</html>
