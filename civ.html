@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html><head>
+<meta charset="utf-8">
+<title>test</title>
+</head>
+<body>
+<div id="result" class="log" aria-live="polite"></div>
+<p><label>n: <input autofocus type="number" id="n" value="2"></label></p>
+
+<script>
+$("#n").addEventListener("keydown", e => {
+if (e.key && e.key === "Enter") e.target.click();
+}); // keydown
+
+$("#n").addEventListener("click", e => {
+run (Number($("#n").value));
+});
+
+function run (n) {
+const a = Array(n);
+a.fill(true);
+
+a[0] = a[1] = false;
+for (let p=2; p<n; p++) {
+civ(p, a);
+console.log(`${p}: ${a.join(", ")}`);
+} // for
+
+const primes = primesOf(a);
+
+console.log(`result: ${primes.length} primes; ${primes.join(", ")}`);
+append($("#result"), `
+result: ${primes.length} primes;
+<br>${primes.join(", ")}
+`);
+} // run
+
+function civ (p, a) {
+for(let p0 = 2*p; p0<a.length; p0 += p) {
+a[p0] = 0;
+} // for
+} // civ
+
+function primesOf (a) {
+return a.map((x,i) => x? i : 0).filter(x => x>0);
+} // primesOf
+
+function range (a, b, s = 1) {
+const min = Math.min(a,b);
+const max = Math.max(a,b);
+const result = [];
+
+for (let i=min; i<=max; i += s) result.push(i);
+return result;
+} // range
+
+function append(element, html) {
+element.insertAdjacentHTML("beforeEnd", html);
+return element;
+} // append
+
+function not (x) {return !Boolean(x);}
+function $(s, c = document) {return c.querySelector(s);}
+
+</script>
+
+</body>
+</html>

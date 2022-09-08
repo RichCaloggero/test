@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html><head>
+<meta charset="utf-8">
+<title>test</title>
+</head>
+<body>
+<h1>Testing</h1>
+
+<label>repeats: <input type="range" min="1" max="7" id="repeats"></label>
+<label>clear between repeats: <input type="checkbox" id="clear-between-repeats"></label>
+<br>
+<button id="update-r1">Update r1</button>
+<button id="clear-r1">clear r1</button>
+<br>
+<button id="update-r2">Update r2</button>
+<button id="clear-r2">clear r2</button>
+
+<hr>
+<h2>r1:</h2>
+<div id="r1" aria-live="polite"></div>
+
+<h2>r2:</h2>
+<div id="r2" aria-live="assertive"></div>
+
+<script>
+const r1 = document.querySelector("#r1");
+const r2 = document.querySelector("#r2");
+const updateR1 = document.querySelector("#update-r1");
+const updateR2 = document.querySelector("#update-r2");
+let count = 1;
+
+updateR1.addEventListener("click", () => update(r1, $("#repeats").value, $("#clear-between-repeats").checked));
+updateR2.addEventListener("click", () => update(r2, $("#repeats").value, $("#clear-between-repeats").checked));
+
+function update (liveRegion, repeats, clearBetweenRepeats) {
+
+for (let i=0; i<repeats; i++) {
+const message = document.createElement("p");
+message.textContent = `message ${count++}.`;
+liveRegion.appendChild(message);
+if (clearBetweenRepeats) clear(liveRegion);
+} // for
+} // update
+
+function clear (liveRegion) {
+liveRegion.innerHTML = "";
+} // clear
+
+function $(s, c = document) {
+return c.querySelector(s);
+} // $
+
+</script>
+
+</body>
+</html>
