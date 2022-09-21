@@ -13,21 +13,32 @@
 
 <br><label>Column headers on row (0 for none): <input type="number" id="header-row" value="1"></label>
 <br><label>Row headers on column (0 for none): <input type="number" id="header-column" value="1"></label>
+
+<br><label>Table caption (briefly describe the purpose of the table):
+<br><input type="text" id="caption">
+</label>
 <br><button id="convert">Convert</button>
+
+<hr>
 <br><label>Results:
 <br><textarea id="html" rows="10" cols="80"></textarea>
 </label>
 
 <div id="status" role="status"></div>
 
+<hr><div id="dom"></div>
+
 <script>
 const data = $("#data");
 const convert = $("#convert");
 const headerRow = $("#header-row");
 const headerColumn = $("#header-column");
-const html = $("#html");
+const caption = $("#caption");
 
-convert.addEventListener("click", () => html.value = markup(read(data.value), Number(headerRow.value), Number(headerColumn.value)));
+const html = $("#html");
+const dom = $("#dom");
+
+convert.addEventListener("click", () => dom.innerHTML = html.value = markup(read(data.value), Number(headerRow.value), Number(headerColumn.value), caption.value));
 
 function read (data) {
 const lines = data.split("\n");
@@ -35,12 +46,12 @@ const table = lines.map(line => line.split("\t"));
 return table;
 } // read
 
-function markup (table, headerRow, headerColumn) {
+function markup (data, headerRow, headerColumn, caption) {
 //console.log(`markup: header row === ${headerRow}, header column === ${headerColumn}.\n`);
 let html = "";
 
-for (let r=0; r<table.length; r++) {
-const row = table[r];
+for (let r=0; r<data.length; r++) {
+const row = data[r];
 html += `<tr class="${r%2 === 0? 'even' : 'odd'}">`;
 
 for (let c=0; c<row.length; c++) {
@@ -60,7 +71,7 @@ html += `${cell}\ `;
 html += "</tr>\n";
 } // row
 
-return html;
+return table(html, caption);
 } // markup
 
 function th (data, scope) {
@@ -70,6 +81,14 @@ return `<th scope="${scope}">${data}</th>`;
 function td (data) {
 return `<td>${data}</td>`;
 } // td
+
+function table (html, caption) {
+return `<table>
+${caption? '<caption>' + caption + '</caption>' : ""}
+${html}
+</table>
+`;
+} // table
 
 function $ (selector, context = document) {
 return context.querySelector(selector);
