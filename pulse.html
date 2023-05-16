@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en"
+<head>
+<meta charset="utf-8">
+<title>Demo</title>
+</head>
+<body>
+<h1>Demo</h1>
+<p><button id="trigger" autofocus>Click here or press any key repeatedly to measure BPM</button></p>
+
+<div id="result" role="status"></div>
+
+<script>
+const trigger = document.querySelector("#trigger");
+const result = document.querySelector("#result");
+let time = 0;
+let start = done = count = 0;
+let interval = 10;
+
+document.addEventListener("keydown", e => {
+if (e.key === "Control" || e.key === "Shift" || e.key === "Enter" || e.key === " ") trigger.click();
+});
+
+trigger.addEventListener("click", measureBPM);
+
+function measureBPM () {
+time = performance.now();
+//statusMessage(`${start}, ${time}`);
+
+if (start === 0) start = performance.now();
+else if (isDone(start, time, interval)) displayResult(start, time, count);
+else count += 1;
+} // measureBPM
+
+function isDone (start, time, interval) {
+return (time - start) > 1000 * interval;
+} // isDone
+
+function displayResult (start, done, count) {
+if (start === 0 || done === 0 || count === 0 || interval === 0) return error("invalid!");
+
+const _interval = (done - start) / 1000;
+result.textContent = "";
+const bpm = (60/_interval) * count;
+
+statusMessage(`${count} beats in ${_interval} seconds == ${bpm} BPM`);
+reset();
+} // displayResult
+
+function reset () {
+start = time = count = 0;
+} // reset
+
+
+function error (message) {
+statusMessage(`error: ${message}`);
+} // error
+
+function statusMessage (message) {
+result.insertAdjacentHTML("beforeEnd", `<p>${message}</p>`);
+} // statusMessage
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,82 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>test</title>
+</head>
+<body> 
+<button id="runTest">Run</button>
+<div id="log" role="log">
+</div>
+
+
+<script>
+document.querySelector("#runTest").addEventListener("click", runTest);
+
+function runTest () {
+statusMessage("begin test:", "init log");
+
+test("constant bit rate", "seekTest-cbr.mp3");
+
+document.addEventListener("complete", () => test("variable bit rate", "seekTest-vbr.mp3"), {once: true});
+} // runTest
+
+function test (label, audioSource) {
+const audio = document.createElement("audio");
+const startTime = performance.now();
+statusMessage(`start test ${label}:`);
+audio.src = audioSource;
+
+on("canplaythrough", () => report(`loaded ${Number(audio.duration / 60).toFixed(1)} minutes of audio`), seekToEnd);
+audio.load();
+
+function seekToEnd () {
+on("seeked", "seek to end", seekToStart);
+
+audio.currentTime = audio.duration;
+} // seekToEnd
+
+function seekToStart () {
+on("seeked", "seek to start", backToEnd);
+
+audio.currentTime = 0;
+} // seekToStart
+
+function backToEnd () {
+on("seeked", "back to end", complete);
+
+audio.currentTime = audio.duration;
+} // backToEnd
+
+function complete () {
+statusMessage("test complete.<br><hr>");
+document.dispatchEvent(new CustomEvent("complete", {detail: label}));
+ } // complete
+
+
+function on (event, messageOrFunction, continuation) {
+const _function = messageOrFunction instanceof Function?
+messageOrFunction : () => report(messageOrFunction);
+
+audio.addEventListener(event, () => {
+_function();
+continuation();
+}, {once: true});
+} // on
+
+function report (label) {
+//console.log(label, startTime, performance.now(), performance.now() - startTime);
+statusMessage(`${label}: ${(performance.now() - startTime)} milliseconds`);
+} // report
+} // test
+
+function statusMessage (text, init) {
+const log = document.querySelector("#log");
+if (init) log.innerHTML = "";
+log.insertAdjacentHTML("beforeEnd", text + "<br>");
+} // statusMessage
+</script>
+
+
+</body>
+</html>

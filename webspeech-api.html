@@ -1,0 +1,25 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>test</title>
+</head>
+<body> 
+
+<button>button 1</button>
+<button>button 2</button>
+<a href="#">link 1</a>
+
+<script>
+const ss = speechSynthesis;
+
+document.addEventListener("focusin", e => {
+const text = e.target.textContent;
+const speech = new SpeechSynthesisUtterance (text);
+ss.speak(speech);
+});
+
+</script>
+
+</body>
+</html>
