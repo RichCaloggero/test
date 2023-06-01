@@ -2,38 +2,17 @@
 <html>
 <head>
 <meta charset="utf-8">
-<title>test</title>
+<title>Datalist Test</title>
 </head>
 <body>
-<h1>Datalist</h1>
-<div id="status" role="status"></div>
-
-<label>Search: <input aria-controls="results" list="results"></label>
-
+<h1>datalist test</h1> 
+<div role="region" aria-label="region label">
+<h2>Region Title</h2> <label>search: <input autofocus type="text" list="results"></label>
 <datalist id="results">
+<option value="result1">result1</option>
+<option value="result2">result2</option>
 </datalist>
-
-<script>
-const data = [
-"abacus", "about me", "accuracy",
-"butter is good", "birthday", "bogus", "bugs are annoying"
-];
-
-document.querySelector("input").addEventListener("input", e => display(e.target.value, document.querySelector("#results")));
-
-function display (s, results) {
-results.innerHTML =
-search(s.at(0))
-.map(s => `<option>${s}</option>`)
-.join("\n");
-
-document.querySelector("#status").textContent = `${results.children.length} items found.`;
-} // display
-
-function search (c) {
-return data.filter(s => s[0] === c);
-} // search
-</script>
+</div>
 
 </body>
 </html>

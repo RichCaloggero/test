@@ -1,0 +1,82 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>test</title>
+</head>
+<body>
+<div role="status" id="status"></div>
+
+<button class="reset" accesskey="r">Reset</button>
+<fieldset><legend><h2>Drag items from list 1 to list 2 in ascending order</h2></legend>
+
+<fieldset id="source"><legend><h3>source</h3></legend>
+<ul></ul>
+</fieldset>
+
+<fieldset id="destination"><legend><h3>destination</h3></legend>
+<ul></ul>
+</fieldset>
+
+</fieldset>
+<button class="reset" accesskey="r">Reset</button>
+
+<script>
+const $source = $("#source");
+const $destination = $("#destination");
+const wordlist = "abacus document text local baby chemistry biology".split(" ");
+let item = null;
+
+$$(".reset").forEach(button => button.addEventListener("click", () => reset()));
+
+$("#source").addEventListener("click", e => {
+resetSourceItems($$("#source button"));
+item = e.target
+item.setAttribute("aria-pressed", "true");
+});
+
+$("#destination").addEventListener("click", e => {
+e.target.innerHTML = item.innerHTML
+item.parentElement.remove();
+});
+
+reset ("Ready.");
+
+function reset (text = "Done.") {
+$("#source ul").innerHTML = $("#destination ul").innerHTML = "";
+generateSourceList(wordlist, $("#source ul"));
+generateDestinationList(wordlist.length, $("#destination ul"));
+statusMessage(text);
+} // reset
+
+
+function resetSourceItems (items) {
+items.forEach(item => item.setAttribute("aria-pressed", "false"));
+} // resetSourceItems
+
+function generateSourceList (wordlist, list) {
+const html = wordlist.map(word => `<li><button role="button" aria-pressed="false">${word}</button></li>`)
+.join("\n");
+list.insertAdjacentHTML("beforeEnd", html); // html
+} // generateSourceList
+
+function generateDestinationList (count, list) {
+for (let i = 0; i < count; i++) {
+const html = `<li><button>${i+1}: empty</button></li>`;
+list.insertAdjacentHTML("beforeEnd", html);
+} // for
+} // generateDestinationList
+
+
+function statusMessage (text) {
+$("#status").textContent = "";
+$("#status").textContent = text;
+} // statusMessage
+
+function $ (s, c = document) {return c.querySelector(s);} // $
+function $$ (s, c = document) {return c.querySelectorAll(s);} // $$
+
+</script>
+
+</body>
+</html>
