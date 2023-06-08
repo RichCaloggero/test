@@ -1,0 +1,176 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>test</title>
+</head>
+<body>
+<div role="status" id="status"></div>
+
+<button>--start--</button>
+
+<ul>
+<li role="option">item 1</li>
+<li role="option" aria-selected="true">item 2</li>
+<li role="option">item 3</li>
+</ul>
+
+<ul id="icecream">
+<li>Chocolate</li>
+<li>Coconut</li>
+<li>Vanilla</li>
+</ul>
+
+
+<button>--end--</button>
+
+<script>
+$$("ul").init(listbox);
+
+function listbox (l) {
+l.setAttribute("role", "listbox");
+l.setAttribute("style", "list-style-type:none;");
+l.querySelectorAll("li").forEach(x => {
+x.setAttribute("role", "option")
+x.setAttribute("aria-selected", "false")
+});
+setInitialFocus(l);
+l.addEventListener("keydown", e => {
+console.log(`key: ${e.key}:`);
+manageFocus(e);
+});
+console.log(`${arguments.callee.name}: initialized.`);
+
+function setInitialFocus (listbox) {
+if (listbox.children.length === 0) return;
+const element = listbox.querySelector("[selected]") || listbox.querySelector('[tabindex="0"]') || listbox.children[0];
+return setFocus(element);
+} // setInitialFocus
+
+function setFocus (element) {
+element.parentElement.querySelectorAll("[tabindex]").forEach(x => {
+x.removeAttribute("tabindex");
+x.setAttribute("aria-selected", "false");
+});
+element.setAttribute("tabindex", "0");
+element.setAttribute("aria-selected", "true");
+element.focus();
+return element;
+} // setFocus
+
+function manageFocus (e) {
+let selectedItem = e.target;
+if (!selectedItem || !selectedItem.matches("li")) return;
+const listbox = selectedItem.parentElement;
+
+const commands = {
+"ArrowDown": function () {
+let x = selectedItem.nextElementSibling;
+if (x === null) x = 	listbox.children.length > 0? listbox.children[0] : selectedItem;
+return x;
+}, // next
+
+"ArrowUp": function () {
+let x = selectedItem.previousElementSibling;
+if (x === null) x = listbox.children.length > 0? [...listbox.children].at(-1) : selectedItem;
+return x;
+}, // next
+}; // commands
+
+const command = commands[e.key];
+if (command) selectedItem = command();
+setFocus(selectedItem);
+} // manageFocus
+
+function getSelectedItems (l) {
+return [...l.querySelector('[aria-selected="true"]')];
+} // getSelectedItems
+} // listbox
+
+/*function listbox_activedescendant (l) {
+const id = activeDescendantId(l.id);
+l.setAttribute("role", "listbox");
+l.setAttribute("tabindex", "0");
+l.setAttribute("style", "list-style-type:none;");
+l.querySelectorAll("li").forEach(x => x.setAttribute("role", "option"));
+
+setInitialFocus(l);
+l.addEventListener("keydown", manageFocus);
+
+function setInitialFocus (listbox) {
+const id = activeDescendantId(listbox.id);
+if (listbox.children.length === 0) return;
+const element = listbox.querySelector("[aria-selected]") || listbox.querySelector(`#${id}`) || listbox.children[0];
+element.id = id;
+element.setAttribute("aria-selected", "true");
+
+listbox.setAttribute("aria-activedescendant", id);
+} // setInitialFocus
+
+function activeDescendantId (id) {
+return `${id}-selected-item`;
+} // generateActiveDescendantId 
+
+
+function manageFocus (e) {
+const listbox = e.target;
+const selectedItemId = activeDescendantId(listbox.id);
+
+let selectedItem = listbox.querySelector("[aria-selected]");
+//console.log(selectedItem.textContent || selectedItem, " ", listbox);
+if (!selectedItem) return;
+
+const commands = {
+"ArrowDown": function () {
+let x = selectedItem.nextElementSibling;
+if (x === null) x = 	listbox.children.length > 0? listbox.children[0] : selectedItem;
+return x;
+}, // next
+
+"ArrowUp": function () {
+let x = selectedItem.previousElementSibling;
+if (x === null) x = listbox.children.length > 0? [...listbox.children].at(-1) : selectedItem;
+return x;
+}, // next
+}; // commands
+
+selectedItem.removeAttribute("id");
+selectedItem.removeAttribute("aria-selected");
+listbox.removeAttribute("aria-activedescendant");
+if (e.key === "ArrowDown" || e.key === "ArrowUp") selectedItem = commands[e.key]();
+selectedItem.setAttribute("id", selectedItemId);
+selectedItem.setAttribute("aria-selected", "true");
+listbox.setAttribute("aria-activedescendant", selectedItemId);
+} // manageFocus
+} // listbox_activedescendant
+*/
+
+function $$ (selector, context = document) {
+const elements = context.querySelectorAll(selector);
+return {
+elements: elements,
+init: function (initializer) {
+const counter = idCounter();
+const nextId = stem => `${stem}-${counter.next().value}`;
+
+elements.forEach(element => {
+if (!element.id) element.id = nextId(initializer.name || "dom-object");
+initializer(element)
+});
+} // init
+}; // object
+
+function* idCounter () {
+let count = 0;
+while (true) {
+count += 1;
+yield count;
+} // while
+} // idCounter
+} // $$
+
+</script>
+
+
+</body>
+</html>
