@@ -8,6 +8,9 @@
 <div role="status" id="status"></div>
 
 <button>--start--</button>
+<div class="combobox">
+<label>Search: <input type="text"></label>
+</div>
 
 <ul>
 <li role="option">item 1</li>
@@ -15,52 +18,163 @@
 <li role="option">item 3</li>
 </ul>
 
-<ul id="icecream">
+<ul id="icecream" multiple>
 <li>Chocolate</li>
 <li>Coconut</li>
 <li>Vanilla</li>
 </ul>
+
+<ul id="things"></ul>
 
 
 <button>--end--</button>
 
 <script>
 $$("ul").init(listbox);
+document.querySelector("#things").insertAdjacentHTML("beforeEnd", 
+`<li>thing 1</li>
+<li>thing 2</li>
+<li>thing 3</li>
+`);
+
+combobox(document.querySelector(".combobox"), ["table", "chair", "computer", "guitar"]);
+
+function combobox (container, data = []) {
+if (data.length === 0) return;
+const input = container.querySelector("input");
+const list = container.querySelector("ul") || container.appendChild(listbox(document.createElement("ul")));
+container.insertAdjacentHTML("beforeEnd", '<div class="status" role="status"></div>');
+const status = [...container.children].at(-1);
+input.setAttribute("role", "combobox");
+input.setAttribute("aria-controls", list.id);
+input.setAttribute("aria-expanded", "false");
+list.hidden = true;
+add(data, list);
+
+container.addEventListener("keydown", manageFocus);
+input.addEventListener("input", manageList);
+input.addEventListener("focus", close);
+container.addEventListener("click", selectItem);
+
+
+function add (data, list) {
+list.innerHTML = data.map(x => `<li>${x}</li>`).join("\n");
+} // add
+
+function manageList (e) {
+const text = e.target.value.toLowerCase();
+add(data.filter(x => x.toLowerCase().startsWith(text)), list);
+
+if (list.children.length === 0 || text.length === 0) close();
+else open();
+list.clearFocus();
+if (not(list.hidden)) statusMessage(`${list.length} items found.`);
+} // manageList
+
+function manageFocus (e) {
+const commands = {
+"ArrowDown": function () {
+const option = list.selectedOptions[0];
+if (e.target === input && option) option.focus();
+}, // arrowDown
+
+"Enter": function () {
+if (e.target === input) return;
+e.target.click();
+}, // Enter
+
+"Escape": function () {
+input.value = "";
+input.focus();
+}, // Escape
+}; // commands
+
+const key = e.key;
+if (commands[key]) commands[key]();
+} // manageFocus
+
+function selectItem (e) {
+if (e.target.parentElement === list) {
+input.value = e.target.textContent;
+input.focus();
+} // if
+} // selectItem
+
+function statusMessage (text) {
+status.textContent = text;
+} // statusMessage
+
+function open () {
+list.hidden = false;
+input.setAttribute("aria-expanded", "true");
+} // open
+
+function close () {
+list.hidden = true;
+input.setAttribute("aria-expanded", "false");
+statusMessage("");
+} // close
+} // combobox
 
 function listbox (l) {
+const list = l;
 l.setAttribute("role", "listbox");
 l.setAttribute("style", "list-style-type:none;");
+const multiple = l.hasAttribute("multiple");
+if (multiple) l.setAttribute("aria-multiselectable", "true");
+
 l.querySelectorAll("li").forEach(x => {
 x.setAttribute("role", "option")
 x.setAttribute("aria-selected", "false")
 });
 setInitialFocus(l);
-l.addEventListener("keydown", e => {
-console.log(`key: ${e.key}:`);
-manageFocus(e);
-});
-console.log(`${arguments.callee.name}: initialized.`);
+l.addEventListener("keydown", manageFocus);
+//console.log(`${arguments.callee.name}: initialized.`);
+setupMutationObserver (l, listbox);
+return modifyDomNode(l);
 
 function setInitialFocus (listbox) {
 if (listbox.children.length === 0) return;
-const element = listbox.querySelector("[selected]") || listbox.querySelector('[tabindex="0"]') || listbox.children[0];
-return setFocus(element);
+const element = listbox.querySelector("li[selected]") || listbox.querySelector('li[tabindex="0"]') || listbox.children[0];
+setFocus(element); // caller is responsible for calling focus()
+return element;
 } // setInitialFocus
 
 function setFocus (element) {
-element.parentElement.querySelectorAll("[tabindex]").forEach(x => {
-x.removeAttribute("tabindex");
-x.setAttribute("aria-selected", "false");
-});
-element.setAttribute("tabindex", "0");
+// caller is responsible for calling focus()
+const listbox = element.parentElement;
+clearFocus();
+if (not(multiple)) {
+// selection follows focus in single select mode
+listbox.querySelectorAll("li[aria-selected]").forEach(x => x.setAttribute("aria-selected", "false"));
 element.setAttribute("aria-selected", "true");
-element.focus();
+} // if
+
+element.setAttribute("tabindex", "0");
 return element;
 } // setFocus
 
+function clearFocus () {
+l.querySelectorAll("li[tabindex]").forEach(x => x.removeAttribute("tabindex"));
+} // clearFocus
+
+
+function setupMutationObserver (element, callback) {
+const observer = new MutationObserver ((mutationList, observer) => {
+for (const mutation of mutationList) {
+if (mutation.type === "childList") {
+observer.disconnect();
+callback(element);
+} // if
+} // for
+}); // new Observer
+
+observer.observe(element, {childList: true});
+} // setupMutationObserver
+
 function manageFocus (e) {
 let selectedItem = e.target;
-if (!selectedItem || !selectedItem.matches("li")) return;
+if (not(selectedItem) || not(selectedItem.matches("li"))) return;
 const listbox = selectedItem.parentElement;
 
 const commands = {
@@ -75,16 +189,46 @@ let x = selectedItem.previousElementSibling;
 if (x === null) x = listbox.children.length > 0? [...listbox.children].at(-1) : selectedItem;
 return x;
 }, // next
+
+" ": function () {
+if (multiple) selectedItem.setAttribute("aria-selected",
+selectedItem.getAttribute("aria-selected") === "true"? "false" : "true"
+); // toggle attribute
+
+return selectedItem;
+}, // spaceBar
 }; // commands
 
 const command = commands[e.key];
 if (command) selectedItem = command();
-setFocus(selectedItem);
+setFocus(selectedItem).focus();
 } // manageFocus
 
-function getSelectedItems (l) {
-return [...l.querySelector('[aria-selected="true"]')];
+function getSelectedOptions () {
+return [...l.querySelectorAll('[aria-selected="true"]')];
+} // getSelectedOptions
+
+function getSelectedIndecies () {
+return [...l.children]
+.map((x, i) => x.hasAttribute("aria-selected")? i : -1)
+.filter(x => x >= 0);
+} // getSelectedIndecies
+
+function getSelectedItems () {
+return [...getSelectedOptions()].map(x => x.dataset.value || x.value || x.textContent);
 } // getSelectedItems
+
+function length () {return l.children.length;}
+
+function modifyDomNode(list) {
+return Object.defineProperties(list, {
+selectedOptions: {configurable: true, get: function () {return getSelectedOptions();}},
+selectedIndecies: {configurable: true, get: function () {return getSelectedIndecies();}},
+selectedItems: {configurable: true, get: function () {return getSelectedItems();}},
+length: {configurable: true, get: function () {return length();}},
+clearFocus: {configurable: true, value: function () {clearFocus();}}
+}); // defineProperties
+} // modifyDomNode
 } // listbox
 
 /*function listbox_activedescendant (l) {
@@ -118,7 +262,7 @@ const selectedItemId = activeDescendantId(listbox.id);
 
 let selectedItem = listbox.querySelector("[aria-selected]");
 //console.log(selectedItem.textContent || selectedItem, " ", listbox);
-if (!selectedItem) return;
+if (not(selectedItem)) return;
 
 const commands = {
 "ArrowDown": function () {
@@ -154,7 +298,7 @@ const counter = idCounter();
 const nextId = stem => `${stem}-${counter.next().value}`;
 
 elements.forEach(element => {
-if (!element.id) element.id = nextId(initializer.name || "dom-object");
+if (not(element.id)) element.id = nextId(initializer.name || "dom-object");
 initializer(element)
 });
 } // init
@@ -169,6 +313,7 @@ yield count;
 } // idCounter
 } // $$
 
+function not (x) {return !x;}
 </script>
 
 
