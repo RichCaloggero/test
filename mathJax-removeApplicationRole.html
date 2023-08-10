@@ -1,0 +1,54 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>test</title>
+<script>
+MathJax = {
+loader: {
+load: [
+"input/asciimath",
+"output/svg",
+"ui/menu",
+"a11y/semantic-enrich",
+"a11y/complexity",
+"a11y/explorer",
+"a11y/assistive-mml",
+] // components
+}, // loader
+}; // MathJax configuration
+</script>
+
+<script type="text/javascript" id="MathJax-script" async
+src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js">
+</script>
+</head>
+<body>
+<h1>Test</h1>
+
+<p><button id="substitute">substitute role="tab"</button></p>
+
+<p>When `a != 0`, there are two solutions to `ax^2 + bx + c = 0` and
+they are</p>
+<ul>
+<li>`x = (-b +- sqrt(b^2-4ac))/(2a) .`</li>
+</ul>
+
+<script>
+document.querySelector("#substitute").addEventListener("click", () => {
+fixMathJaxExpressions();
+}); // addEventListener
+
+function fixMathJaxExpressions (root = document) {
+root.querySelectorAll("[role='application']").forEach(element => {
+// this replaces application roles with a role that frees the keyboard like application, but can be escaped from with the escape key
+element.setAttribute("role", "tab");
+// this silences the role name (tab makes no sense, so say nothing instead, or announce "math" if desired)
+element.setAttribute("aria-roledescription", " ");
+}); // forEach
+} // fixMathJaxExpressions
+
+</script>
+
+</body>
+</html>
