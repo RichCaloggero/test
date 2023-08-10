@@ -14,6 +14,8 @@
 
 <div role="status" id="status"></div>
 
+<p><button id="enableSpokenFeedback" aria-pressed="false" accesskey="e">enable spoken feedback</button></p>
+
 <fieldset><legend><h2>Reorder - html list</h2></legend>
 <ul id="list1">
 <li>thing 3</li>
@@ -32,12 +34,17 @@
 
 </fieldset>
 
+<script src="lib.js"></script>
 <script>
 const list1 = document.querySelector("#list1");
 const list2 = document.querySelector("#list2");
+[...list1.children].forEach(x => x.tabIndex = 0);
+const enableSpokenFeedback = document.querySelector("#enableSpokenFeedback");
 
 list1.addEventListener("click", reorderHtmlList);
 list2.addEventListener("click", reorderSelectList);
+list1.addEventListener("keydown", keyboardSupport);
+enableSpokenFeedback.addEventListener("click", e => spokenFeedbackEnabled = toggle(e.target));
 
 function reorderHtmlList (e) {
 const item = e.target;
@@ -89,11 +96,23 @@ function reorderSelectList (e) {
 } // reorderSelectList
 
 function statusMessage (text) {
+if (spokenFeedbackEnabled) speak(text);
 document.querySelector("#status").textContent = text;
 } // statusMessage
 
-function not (x) {return !x;}
+function keyboardSupport (e) {
+const key = e.key;
+if (e.ctrlKey || e.altKey || e.shiftKey || e.metaKey) return true;
+if (key === "Enter" || key === " ") e.target.click();
+else return true;
+} // keyboardSupport
 
+function toggle (button) {
+const state = button.hasAttribute("aria-pressed")? button.getAttribute("aria-pressed") === "true" : false;
+const newState = not(state);
+button.hasAttribute("aria-pressed")? button.setAttribute("aria-pressed", newState? "true" : "false") : true;
+return newState;
+} // toggle
 </script>
 
 </body>

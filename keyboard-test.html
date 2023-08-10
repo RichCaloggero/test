@@ -79,20 +79,20 @@ speak(`${getControlName(e.target)}, ${getControlValue(e.target)}`);
 } // speakControl
 
 function getControlName (x) {
-if (!x.matches) return "";
-if (x.matches("a")) return "link";
+if (not(x.matches)) return "";
+else if (x.matches("button")) return "";
+else if (x.matches("a")) return "link";
 else if (x.matches("input")) return x.type;
 else return "";
 } // getControlName
 
 function getControlValue (x) {
-if (!x.matches) return "";
-if (x.matches("input")) {
+if (not(x.matches)) return "";
+else if (x.matches("input")) {
 return `${x.getAttribute("placeholder")}, ${x.type === "checkbox"? (x.checked? "checked" : "unchecked") : x.value}`;
 } else {
 return x.textContent;
 } // if
-
 } // getControlValue
 
 function speakOnClick (e) {
@@ -116,6 +116,7 @@ function $ (selector, context = document) {
 return context.querySelector(selector);
 } // $
 
+function not (x) {return !x;}
 
 </script>
 
