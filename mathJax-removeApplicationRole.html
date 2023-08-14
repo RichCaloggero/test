@@ -10,11 +10,11 @@ load: [
 "input/asciimath",
 "output/svg",
 "ui/menu",
-"a11y/semantic-enrich",
+/*"a11y/semantic-enrich",
 "a11y/complexity",
 "a11y/explorer",
 "a11y/assistive-mml",
-] // components
+*/] // components
 }, // loader
 }; // MathJax configuration
 </script>
@@ -26,7 +26,39 @@ src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js">
 <body>
 <h1>Test</h1>
 
-<p><button id="substitute">substitute role="tab"</button></p>
+<details>
+<summary><h2>Instructions</h2></summary>
+<p>MathJax can generate speech for math expressions, and can also provide the ability to natively interact with each expression and explore it (i.e. walk the expression tree). This makes it easier to understand complex expressions via speech.
+However, in order to do this, all screen reader commands must be turned off, and all keys must be available for the web application to use. THis is facilitated via the "application" aria role.
+</p><p>
+The issue is that NVDA, once in application mode, cannot escape from it.
+This means that one a math expression gains focus and application mode is engaged, you cannot do anything else with the document aside from tabbing from expression to expression; all text between expressions is unavailable.
+It is possible to explicitly non-math parts of the document with role="document", but you must tab to a focusable control where the document role applies. If that is far away from the math expression your currently reading, then you then need to get back to that expression via screen reader commands before you can read surrounding text.
+</p><p>
+In order to see this behavior, set up mathjax via the MathJax menu as described below.
+</p>
+
+<ul><li>
+In the math settings menu, turn off "add text hints"
+</li><li>
+in the accessibility menu, turn off "include hidden mathML"
+</li><li>
+In the accessibility menu, turn on "activate", and "include in tab order"
+</li></ul>
+
+<p>Once the page has been refreshed (may need to do this a few times as you change the various options), each expression is now inside a container with role="application".
+When you tab among the expressions, you can enter exploration mode via the enter key, and move up and down the tree with up / down arrows, and move through each level via left / right arrows.
+
+Once you want to move on to the next expression, or read any text that might lie between expressions, the only way out is to tab to the "substitute role='tab'" button since that is in a container explicitly tagged with role="document".
+</p><p>
+However, if you click this button, now all application roles are now role="tab", with the additional aria-roledescription=" ". You could use aria-roledescription="math", but I found this too verbose.
+</p><p>
+The tab role also turns off screen reader commands like arrow keys and enter and spaceBar when inside the container, however it also allows you to escape and reenable browse mode via the escape key.
+NVDA used to have a function which allowed you to completely escape out of containers tagged with role="application" bound to nvdaKey+control+spaceBar, but this no longer seems to function, even though the binding seems to exist.
+</p>
+</details>
+
+<p role="document"><button id="substitute">substitute role="tab"</button></p>
 
 <p>When `a != 0`, there are two solutions to `ax^2 + bx + c = 0` and
 they are</p>
