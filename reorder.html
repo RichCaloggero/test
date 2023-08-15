@@ -40,10 +40,12 @@ const list1 = document.querySelector("#list1");
 const list2 = document.querySelector("#list2");
 [...list1.children].forEach(x => x.tabIndex = 0);
 const enableSpokenFeedback = document.querySelector("#enableSpokenFeedback");
+let spokenFeedbackEnabled = false;
 
 list1.addEventListener("click", reorderHtmlList);
 list2.addEventListener("click", reorderSelectList);
-list1.addEventListener("keydown", keyboardSupport);
+list1.addEventListener("keydown", htmlListKeyboardSupport);
+list2.addEventListener("keydown", htmlSelectListKeyboardSupport);
 enableSpokenFeedback.addEventListener("click", e => spokenFeedbackEnabled = toggle(e.target));
 
 function reorderHtmlList (e) {
@@ -92,7 +94,48 @@ statusMessage(`${element.textContent} inserted before ${item.textContent}`);
 } // reorderHtmlList
 
 function reorderSelectList (e) {
+const list = e.target;
+const item = list.selectedOptions[0];
+const selected = getSelected(list);
 
+if (item === selected) {
+unselectAll(list);
+statusMessage(`${item.textContent} unselected`);
+
+} else if (not(selected)) {
+unselectAll(list);
+pickUp(item);
+
+} else {
+drop(selected, item);
+} // if
+
+function getSelected (list) {
+return list.querySelector(".selected");
+} // getSelected
+
+function unselectAll (list) {
+list.querySelectorAll(".selected").forEach(x => x.classList.remove("selected"));
+} // unselectAll
+
+function pickUp (item) {
+unselectAll(list);
+item.classList.add("selected");
+statusMessage(`picked up ${item.textContent}`);
+} // pickUp
+
+function drop (selected, item) {
+insert(selected, item);
+statusMessage(`drop ${selected.textContent}`);
+} // drop
+
+function insert (element, item) {
+if (element === item) return;
+element.remove();
+item.insertAdjacentElement("beforeBegin", element);
+unselectAll(list);
+statusMessage(`${element.textContent} inserted before ${item.textContent}`);
+} // insert
 } // reorderSelectList
 
 function statusMessage (text) {
@@ -100,12 +143,19 @@ if (spokenFeedbackEnabled) speak(text);
 document.querySelector("#status").textContent = text;
 } // statusMessage
 
-function keyboardSupport (e) {
+function htmlListKeyboardSupport (e) {
 const key = e.key;
 if (e.ctrlKey || e.altKey || e.shiftKey || e.metaKey) return true;
 if (key === "Enter" || key === " ") e.target.click();
 else return true;
-} // keyboardSupport
+} // htmlListKeyboardSupport
+
+function htmlSelectListKeyboardSupport (e) {
+const key = e.key;
+if (e.altKey || e.shiftKey || e.metaKey) return true;
+if (e.ctrlKey && key === "Enter") e.target.click();
+else return true;
+} // htmlSelectListKeyboardSupport
 
 function toggle (button) {
 const state = button.hasAttribute("aria-pressed")? button.getAttribute("aria-pressed") === "true" : false;
