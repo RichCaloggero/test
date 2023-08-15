@@ -7,6 +7,7 @@
 
 <style>
 .selected::before {content: "selected: ";}
+.selected {color: red;}
 </style>
 </head>
 <body>
@@ -46,6 +47,7 @@ list1.addEventListener("click", reorderHtmlList);
 list2.addEventListener("click", reorderSelectList);
 list1.addEventListener("keydown", htmlListKeyboardSupport);
 list2.addEventListener("keydown", htmlSelectListKeyboardSupport);
+list2.addEventListener("change", reportIfSelected);
 enableSpokenFeedback.addEventListener("click", e => spokenFeedbackEnabled = toggle(e.target));
 
 function reorderHtmlList (e) {
@@ -156,6 +158,11 @@ if (e.altKey || e.shiftKey || e.metaKey) return true;
 if (e.ctrlKey && key === "Enter") e.target.click();
 else return true;
 } // htmlSelectListKeyboardSupport
+
+function reportIfSelected (e) {
+const item = e.target.selectedOptions[0];
+if (item.classList.contains("selected")) statusMessage("selected");
+} // reportIfSelected
 
 function toggle (button) {
 const state = button.hasAttribute("aria-pressed")? button.getAttribute("aria-pressed") === "true" : false;
