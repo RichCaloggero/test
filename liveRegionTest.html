@@ -9,10 +9,16 @@
 <label>Markup:
 <input type="text" class="markup" value='role="alert" aria-atomic="true"' accesskey="m">
 </label>
+
+<fieldset><legend>how live region is modified</legend>
 <label>innerHTML:
 <input type="checkbox" class="innerHTML">
+</label><label>replace control when modifying:
+<input type="checkbox" class="replace">
 </label>
+</fieldset>
 
+<hr>
 <br><label>organization search:
 <input type="text" class="query">
 </label>
@@ -26,21 +32,31 @@ const data = ["one", "two", "three", "four", "five"];
 const query = document.querySelector(".query");
 const markup = document.querySelector(".markup");
 const innerHTML = document.querySelector(".innerHTML");
+const replace = document.querySelector(".replace");
 
 query.addEventListener("input", e => {
 const found = data.filter(x => x.includes(e.target.value));
 //document.querySelector(".status").firstChild.data = `${found.length} results.`;
-statusMessage(`${found.length} results.`, innerHTML.checked);
+statusMessage(`${found.length} results.`, innerHTML.checked, replace.checked);
 });
 
 markup.addEventListener("blur", e => applyMarkup(e.target.value));
 
-function statusMessage (text, innerHTML) {
+function statusMessage (text, innerHTML, replace) {
+if (replace) {
+const markup = document.querySelector(".markup").value;
+const x = status().previousElementSibling;
+status().remove();
+x.insertAdjacentHTML("afterEnd",
+`<div class="status" ${markup}>${text}</div>`
+); // insert
+return;
+} // if
+
 if (innerHTML) {
 status().innerHTML = text;
 } else {
-if (status().firstChild.nodeType !== 3) status().innerHTML = "\n";
-status().firstChild.data = text;
+status().textContent = text;
 } // if
 } // statusMessage
 
