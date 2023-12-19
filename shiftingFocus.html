@@ -1,0 +1,47 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+<title>Test</title>
+</head>
+<body>
+<group>
+<h1>Test</h1>
+<p>shifting focus and document timing</p>
+</group>
+<div role="alert" id="status"></div>
+
+<p><a id="shift" href="#skip">Click to shift focus</a></p>
+
+<div id="junk"></div>
+
+<h2 id="skip" tabindex="-1">My Focus Is Here</h2>
+<p>...</p>
+
+<script>
+const junk = document.querySelector("#junk");
+let buffer = "";
+
+
+for (let i=0; i<600; i++) buffer += `<br>This is line ${i+1} of 600; junk junk junk junk junk junk...`;
+
+junk.innerHTML = buffer;
+
+document.addEventListener("readystatechange", e => {
+statusMessage(e.target.readyState);
+
+if (e.target.readyState === "complete"){
+console.log("setting initial focus...");
+document.querySelector("#shift").focus();
+} // if
+
+}, 100);
+
+function statusMessage (text) {
+document.querySelector("#status").textContent = text;
+} // statusMessage
+
+</script>
+
+
+</body>
+</html>
