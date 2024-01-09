@@ -1,0 +1,35 @@
+<!DOCTYPE HTML>
+<html lang="en">
+	<head>
+<meta charset="utf-8">
+<title>test</title>
+<style>
+ol {
+list-style: none;
+counter-reset: nesting;
+padding-left: 32px;
+}
+ol li {
+counter-increment: nesting;
+}
+ol li:before {
+content: counters(nesting, ".") ". ";
+}
+</style>
+</head>
+<body>
+<h1>Nested ordered lists with decimal numbering</h1>
+
+<ol >
+<li>outer</li>
+<li>outer
+<ol ><li>
+inner
+</li></ol>
+</li><li>
+outer
+</li></ol>
+
+
+	</body>
+</html>
