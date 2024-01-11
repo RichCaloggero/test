@@ -1,0 +1,95 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="generator" content="MarkdownForever" />
+<title></title>
+</head>
+<body>
+<h1>Matrix Question Type</h1>
+<h2>Version 1 using table markup (invalid)</h2>
+
+<p>This is the prefered way to do this, but use divs and spans, and CSS for layout rather than table markup (used here only for demo purposes. Role on table row is invalid).
+</p><p>
+Version 2 below is how you'd markup the same example if you wanted to emphasize the matrix layout; it uses valid table markup and no group role on the table rows. This presents a couple small issues as noted below, however, but does give the user a way to understand and navigate the layout as a table, as well as via tab as a set of form controls.
+</p>
+
+<ul>
+<li>Note the three levels of labeling</li>
+<li>note that each set of radio buttons has a name common to all the buttons in that set; this causes NVDA to properly switch to focus mode when a button gains focus and arrows work to select a choice</li>
+<li>note that table markup is used only for layout since I don't know how to use CSS grid
+<ul>
+<li>qualtrics uses divs and spans, and presumably css for layout</li>
+<li>because I'm using group roles on table rows here, this really isn't good practice, but serves to show the concept of group labeling and has the desired behavior with NVDA</li></ul>
+</li></ul>
+
+<p><button>Previous page</button></p>
+<div class="survey-question-container" role="group" aria-labelledby="question-1-text">
+<div class="question-text" id="question-1-text">
+How often do you complete the following tasks?
+</div>
+
+<div class="choices">
+<table><tr>
+<th id="choice-1">once per week</th>
+<th id="choice-2">multiple times per week</th>
+<th id="choice-3">once per day</th>
+<th id="choice-4">multiple times per day</th>
+</tr><tr role="group" aria-labelledby="task-1-1-text">
+<td id="task-1-1-text">laundry</td>
+<td><input type="radio" name="task-1-1" aria-labelledby="choice-1" value="1"></td>
+<td><input type="radio" name="task-1-1" aria-labelledby="choice-2" value="2"></td>
+<td><input type="radio" name="task-1-1" aria-labelledby="choice-3" value="3"></td>
+<td><input type="radio" name="task-1-1" aria-labelledby="choice-4" value="4"></td>
+</tr><tr role="group" aria-labelledby="task-1-2-text">
+<td id="task-1-2-text">eating</td>
+<td><input type="radio" name="task-1-2" aria-labelledby="choice-1" value="1"></td>
+<td><input type="radio" name="task-1-2" aria-labelledby="choice-2" value="2"></td>
+<td><input type="radio" name="task-1-2" aria-labelledby="choice-3" value="3"></td>
+<td><input type="radio" name="task-1-2" aria-labelledby="choice-4" value="4"></td>
+</tr></table>
+</div>
+</div>
+
+<hr> <h2>Version 2 using table markup without group role (valid)</h2>
+
+<p>The only difference here is that the table is now valid since the group row on the tr elements have been removed. However, the group labeling now needs to be explicitly applied via the aria-labelledby on the radio buttns themselves.
+This solves the invalid table markup, but introduces two other problems.</p>
+
+<ul><li>
+reading down columns now omits the label announcement (not sure why since the cell does contain readable text, albeit referenced via aria-labelledby
+</li><li>
+group label is now only read for the first cell in the row because that is the only cell that explicitly references it; when a group role is used, screen reader reads the label when you enter the group from either end
+</li></ul>
+
+<p><button>Previous page</button></p>
+<div class="survey-question-container" role="group" aria-labelledby="question-1-text">
+<div class="question-text" id="question-1-text">
+How often do you complete the following tasks?
+</div>
+
+<div class="choices">
+<table><tr>
+<th></th>
+<th id="choice-1">once per week</th>
+<th id="choice-2">multiple times per week</th>
+<th id="choice-3">once per day</th>
+<th id="choice-4">multiple times per day</th>
+</tr><tr>
+<th id="task1-text">laundry</th>
+<td><input type="radio" name="task-2-1" aria-labelledby="task1-text choice-1" value="1"></td>
+<td><input type="radio" name="task-2-1" aria-labelledby="choice-2" value="2"></td>
+<td><input type="radio" name="task-2-1" aria-labelledby="choice-3" value="3"></td>
+<td><input type="radio" name="task-2-1" aria-labelledby="choice-4" value="4"></td>
+</tr><tr>
+<th id="task2-text">eating</th>
+<td><input type="radio" name="task-2-2" aria-labelledby="task2-text choice-1" value="1"></td>
+<td><input type="radio" name="task-2-2" aria-labelledby="choice-2" value="2"></td>
+<td><input type="radio" name="task-2-2" aria-labelledby="choice-3" value="3"></td>
+<td><input type="radio" name="task-2-2" aria-labelledby="choice-4" value="4"></td>
+</tr></table>
+</div>
+</div>
+
+</body>
+</html>
