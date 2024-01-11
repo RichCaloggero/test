@@ -1,0 +1,28 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Discuss</title>
+
+<style>
+ol {
+list-style: none;
+counter-reset: nesting;
+padding-left: 32px;
+}
+ol li {
+counter-increment: nesting;
+}
+ol li:before {
+content: counters(nesting, ".") ". ";
+}
+</style>
+</head>
+<body>
+<script src="discuss.js"></script>
+<script>
+document.body.insertAdjacentHTML("afterBegin", discussion.toString());
+</script>
+
+</body>
+</html>
