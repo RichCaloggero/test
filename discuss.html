@@ -16,12 +16,17 @@ counter-increment: nesting;
 ol li:before {
 content: counters(nesting, ".") ". ";
 }
+
+ul {
+list-style-type: none;
+padding-left: 32px;
+}
 </style>
 </head>
 <body>
 <script src="discuss.js"></script>
 <script>
-document.body.insertAdjacentHTML("afterBegin", discussion.toString());
+discuss();
 </script>
 
 </body>

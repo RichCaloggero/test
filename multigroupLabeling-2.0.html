@@ -1,0 +1,62 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="generator" content="MarkdownForever" />
+<title></title>
+<style>
+.table {
+display: grid;}
+grid-template-columns: 2fr 1fr 1fr 1fr 1fr;
+grid-column-gap: 5%;
+grid-row-gap: 2%;
+}
+</style>
+</head>
+<body>
+<h1>Matrix Question Type</h1>
+<h2>Using CSS grid</h2>
+
+
+<ul>
+<li>Note the three levels of labeling</li>
+<li>note that each set of radio buttons has a name common to all the buttons in that set; this causes NVDA to properly switch to focus mode when a button gains focus and arrows work to select a choice</li>
+<li>note that table markup is used only for layout since I don't know how to use CSS grid
+<ul>
+<li>qualtrics uses divs and spans, and presumably css for layout</li>
+<li>because I'm using group roles on table rows here, this really isn't good practice, but serves to show the concept of group labeling and has the desired behavior with NVDA</li></ul>
+</li></ul>
+
+<p><button>Previous page</button></p>
+<div class="survey-question-container" role="group" aria-labelledby="question-1-text">
+<div class="question-text" id="question-1-text">
+How often do you complete the following tasks?
+</div>
+
+<div class="choices">
+<div class="table"><div class="table-row">
+<span class="table-header">&nbsp;</span>
+<span class="table-header" id="choice-1">once per week</span>
+<span class="table-header" id="choice-2">multiple times per week</span>
+<span class="table-header" id="choice-3">once per day</span>
+<span class="table-header" id="choice-4">multiple times per day</span>
+</div><div class="table-row" role="group" aria-labelledby="task-1-1-text">
+<span class="table-data" id="task-1-1-text">laundry</span>
+<span class="table-data"><input type="radio" name="task-1-1" aria-labelledby="choice-1" value="1"></span>
+<span class="table-data"><input type="radio" name="task-1-1" aria-labelledby="choice-2" value="2"></span>
+<span class="table-data"><input type="radio" name="task-1-1" aria-labelledby="choice-3" value="3"></span>
+<span class="table-data"><input type="radio" name="task-1-1" aria-labelledby="choice-4" value="4"></span>
+</div><div class="table-row" role="group" aria-labelledby="task-1-2-text">
+<span class="table-data" id="task-1-2-text">eating</span>
+<span class="table-data"><input type="radio" name="task-1-2" aria-labelledby="choice-1" value="1"></span>
+<span class="table-data"><input type="radio" name="task-1-2" aria-labelledby="choice-2" value="2"></span>
+<span class="table-data"><input type="radio" name="task-1-2" aria-labelledby="choice-3" value="3"></span>
+<span class="table-data"><input type="radio" name="task-1-2" aria-labelledby="choice-4" value="4"></span>
+</div></div>
+</div>
+</div>
+
+
+
+</body>
+</html>
