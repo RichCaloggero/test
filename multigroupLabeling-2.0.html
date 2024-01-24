@@ -6,10 +6,11 @@
 <title></title>
 <style>
 .table {
-display: grid;}
-grid-template-columns: 2fr 1fr 1fr 1fr 1fr;
-grid-column-gap: 5%;
-grid-row-gap: 2%;
+	grid-template-columns: minmax(6.25rem,.3fr) 1fr;
+	display: grid;
+	grid-auto-flow: row dense;
+	grid-template-columns: auto auto;
+	min-width: min-content;
 }
 </style>
 </head>
