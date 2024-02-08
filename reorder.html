@@ -13,6 +13,11 @@
 <body>
 <h1>Reorder</h1>
 
+<p>When an item in the HTML list has keyboard focus, press enter to "pick it up"; focus another item in the list via tab or shift+tab and press enter again to "drop" it. Note that item always gets inserted before the item with focus.
+</p><p>
+Similar for the select list, except both space and enter will pickup and drop.
+</p><hr>
+
 <div role="status" id="status"></div>
 
 <p><button id="enableSpokenFeedback" aria-pressed="false" accesskey="e">enable spoken feedback</button></p>
@@ -155,7 +160,12 @@ else return true;
 function htmlSelectListKeyboardSupport (e) {
 const key = e.key;
 if (e.altKey || e.shiftKey || e.metaKey) return true;
-if (e.ctrlKey && key === "Enter") e.target.click();
+if (e.key === "Enter" || e.key === " ") {
+e.preventDefault();
+e.target.click();
+} // if
+
+//if (e.ctrlKey && key === "Enter") e.target.click();
 else return true;
 } // htmlSelectListKeyboardSupport
 
