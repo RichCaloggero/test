@@ -5,10 +5,12 @@
 <title>test</title>
 </head>
 <body>
+<h1>Noter</h1>
+
 <label>highlight: <select id="highlighter" accesskey="h">
 <option value="strong">strong</option>
 <option value="em">emphasis</option>
-<option value="">none</option>
+<option value="span">none</option>
 </select>
 </label>
 
@@ -49,8 +51,11 @@ const markers = [
 ];
 
 const highlighter = document.querySelector("#highlighter");
-let markerIndex = initializeMarkerList(document.querySelector("#markers"), markers);
-const editor = initializeEditor(document.querySelector("#editor"), document.querySelector("#enable-editing"), highlighter);
+const markerList = initializeMarkerList(document.querySelector("#markers"), markers);
+const editor = initializeEditor(document.querySelector("#editor"), document.querySelector("#enable-editing"), highlighter, markerList);
+
+highlighter.addEventListener("change", e => changeAllHighlighters(editor, e.target.value));
+markerList.addEventListener("change", e => changeAllMarkers(editor, markers[e.target.selectedIndex]));
 
 const log = document.querySelector("#log");
 
@@ -92,7 +97,7 @@ return text;
 } // createNoteFromSelection
 
 function createNote (text, highlighter, markers) {
-const note = document.createElement(highlighter || "span");
+const note = document.createElement(highlighter);
 note.className = "note";
 note.insertAdjacentHTML("beforeEnd",
 `<span class="start-marker">${markers[0]}</span>
@@ -110,10 +115,10 @@ option.textContent = display;
 list.add(option);
 } // for
 
-return list.selectedIndex;
+return list;
 } // initializeMarkerList
 
-function initializeEditor (editor, enabler, highlighter) {
+function initializeEditor (editor, enabler, highlighter, markerList) {
 enabler.addEventListener("change", e => {
 if (e.target.checked) enableEditor(editor);
 else disableEditor(editor);
@@ -127,7 +132,7 @@ case "Home": case "End":
 case "Tab":
 return true; break;
 
-case "Enter": _getSelection(document.getSelection(), highlighter.value, markers[markerIndex]); break;
+case "Enter": _getSelection(document.getSelection(), highlighter.value, markers[markerList.selectedIndex]); break;
 
 case "Escape": if(editor.hasAttribute("contenteditable")) {
 disableEditor(editor);
@@ -148,13 +153,32 @@ return editor;
 
 function enableEditor (editor) {
 editor.setAttribute("contenteditable", "");
+editor.querySelectorAll(".note .text")
+.forEach(text => text.tabIndex = 0);
 editor.focus();
 } // enableEditor
 
 function disableEditor (editor) {
 editor.removeAttribute("contenteditable");
+editor.querySelectorAll(".note .text")
+.forEach(text => text.removeAttribute("tabindex"));
 } // disableEditor
 
+function changeAllHighlighters (editor, tagName) {
+editor.querySelectorAll(".note").forEach(note => {
+const newNote = document.createElement(tagName);
+newNote.innerHTML = note.innerHTML;
+newNote.className = note.className;
+note.replaceWith(newNote);
+}); // forEach note
+} // changeAllHighlighters
+
+function changeAllMarkers (editor, markers) {
+editor.querySelectorAll(".note").forEach(note => {
+note.querySelector(".start-marker").textContent = markers[0];
+note.querySelector(".end-marker").textContent = markers[1];
+}); // forEach note
+} // changeAllMarkers
 
 function not(x) {return !x;}
 
