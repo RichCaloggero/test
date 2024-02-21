@@ -1,0 +1,165 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>test</title>
+</head>
+<body>
+<label>highlight: <select id="highlighter" accesskey="h">
+<option value="strong">strong</option>
+<option value="em">emphasis</option>
+<option value="">none</option>
+</select>
+</label>
+
+<label>markers for screen reader users: <select id="markers" accesskey="m"></select>
+</label>
+
+<br><label>enable editing: <input type="checkbox" id="enable-editing"></label>
+
+<br><hr><div id="editor" class="container">
+
+<p id="paragraph">I should be able to select text from this paragraph.</p>
+
+<p id="paragraph2">... or this one ...</p>
+
+
+<ul id="list"><li id="item1">
+chocolate
+</li><li id="item2">
+<p id="paragraph3">vanilla</p>
+</li><li id="item3">
+strawberry
+</li></ul>
+</div>
+
+<output id="selected-text"></output>
+
+<div role="region" aria-label="log">
+<output id="log"></output>
+</div>
+<button>--end--</button>
+
+<script>
+const markers = [
+["{{", "}}"],
+["[[", "]]"],
+["[note]", "[end note]"],
+["", ""]
+];
+
+const highlighter = document.querySelector("#highlighter");
+let markerIndex = initializeMarkerList(document.querySelector("#markers"), markers);
+const editor = initializeEditor(document.querySelector("#editor"), document.querySelector("#enable-editing"), highlighter);
+
+const log = document.querySelector("#log");
+
+
+function _getSelection (s, highlighter, markers) {
+if (not(s)) return;
+
+if (s.anchorNode !== s.focusNode) {
+s.extend(s.anchorNode, s.anchorNode.textContent.length-1);
+} // if
+
+if (s.anchorNode.nodeType !== 3) return; // only operate on text nodes
+
+if (s.toString().length > 0) {
+const note = createNoteFromSelection(s);
+note.parentElement.replaceChild(createNote(note.textContent, highlighter, markers), note);
+} // if
+} // _getSelection
+
+function createNoteFromSelection (s) {
+const node = s.anchorNode;
+const start = s.anchorOffset;
+const end = s.focusOffset;
+//log.insertAdjacentHTML("beforeEnd", `<p>initial: ${start}, ${end}, ${node.textContent.length}</p>`);
+
+if (end < node.textContent.length-1) {
+node.splitText(end);
+//log.insertAdjacentHTML("beforeEnd", `<p>end split: ${start}, ${end}, ${node.textContent.length}</p>`);
+} // if
+
+
+const text = start > 0?
+node.splitText(start) : node;
+//log.insertAdjacentHTML("beforeEnd", `<p>after text defined: ${start}, ${end}, ${node.textContent.length}</p>`);
+
+//log.insertAdjacentHTML("beforeEnd", `<p>text: ${text.textContent}</p><hr>`);
+
+return text;
+} // createNoteFromSelection
+
+function createNote (text, highlighter, markers) {
+const note = document.createElement(highlighter || "span");
+note.className = "note";
+note.insertAdjacentHTML("beforeEnd",
+`<span class="start-marker">${markers[0]}</span>
+<span class="text" tabindex="0">${text}</span>
+<span class="end-marker">${markers[1]}</span>`);
+
+return note;
+} // createNote
+
+function initializeMarkerList (list, markers) {
+for (let i=0; i<markers.length; i++) {
+const display = markers[i][0]? markers[i].toString() : "none";
+const option = document.createElement("option");
+option.textContent = display;
+list.add(option);
+} // for
+
+return list.selectedIndex;
+} // initializeMarkerList
+
+function initializeEditor (editor, enabler, highlighter) {
+enabler.addEventListener("change", e => {
+if (e.target.checked) enableEditor(editor);
+else disableEditor(editor);
+});
+
+editor.addEventListener("keydown", e => {
+switch (e.key) {
+case "ArrowLeft": case "ArrowRight":
+case "ArrowUp": case "ArrowDown":
+case "Home": case "End":
+case "Tab":
+return true; break;
+
+case "Enter": _getSelection(document.getSelection(), highlighter.value, markers[markerIndex]); break;
+
+case "Escape": if(editor.hasAttribute("contenteditable")) {
+disableEditor(editor);
+enabler.checked = false;
+enabler.focus();
+} // if
+break;
+} // switch
+
+e.preventDefault();
+}); // attempt to change
+
+if (enabler.checked) enableEditor(editor);
+else disableEditor(editor);
+
+return editor;
+} // initializeEditor
+
+function enableEditor (editor) {
+editor.setAttribute("contenteditable", "");
+editor.focus();
+} // enableEditor
+
+function disableEditor (editor) {
+editor.removeAttribute("contenteditable");
+} // disableEditor
+
+
+function not(x) {return !x;}
+
+</script>
+
+
+</body>
+</html>
