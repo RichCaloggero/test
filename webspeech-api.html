@@ -1,23 +1,53 @@
-<!doctype html>
-<html>
+<!DOCTYPE HTML>
+<html lang="en">
 <head>
-<meta charset="utf-8">
-<title>test</title>
+<meta charset="UTF-8" />
 </head>
-<body> 
+<body>
+<h1>Speech Synthesis Demo</h1>
 
-<button>button 1</button>
-<button>button 2</button>
-<a href="#">link 1</a>
+<label>Voice: <select id="voices"></select></label>
+<label>Text:<br>
+<textarea id="text" rows="10" cols="80">
+Hello, this is my voice.
+</textarea>
+</label>
 
 <script>
-const ss = speechSynthesis;
+const ss = window.speechSynthesis;
+const $voices = $("#voices");
+const $text = $("#text");
 
-document.addEventListener("focusin", e => {
-const text = e.target.textContent;
-const speech = new SpeechSynthesisUtterance (text);
+const voices = populateVoiceList($voices);
+$voices.addEventListener("change", e => speakVoicenameAndText());
+speak("Ready.");
+
+function populateVoiceList ($voices) {
+const voices = ss.getVoices();
+
+$voices.innerHTML = voices.map(voice => `<option value="${voice.lang}">${voice.name}</option>`)
+.join("\n");
+
+return voices;
+} // populateVoiceList
+
+function speakVoicenameAndText () {
+const voiceIndex = $voices.selectedIndex;
+const voice = voices[voiceIndex];
+speak(voice.name, voice);
+speak($text.value, voice);
+} // speakVoicenameAndText
+
+function speak (text, voice) {
+const speech = new SpeechSynthesisUtterance ();
+speech.voice = voice;
+speech.text = text;
 ss.speak(speech);
-});
+} // speak
+
+function $ (selector, context = document) {
+return context.querySelector(selector);
+} // $
 
 </script>
 
