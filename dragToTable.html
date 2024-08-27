@@ -1,0 +1,147 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Test</title>
+</head>
+<body>
+<h1>drag and drop</h1>
+
+<div><label>sequential navigation in drop zone:
+<input type="checkbox" id="sequential-navigation">
+</label></div>
+
+<div role="region" aria-label="source">
+<ul><li>
+9
+</li><li>
+16
+</li><li>
+25
+</li><li>
+12
+</li><li>
+15
+</li><li>
+20
+</li></ul>
+</div>
+
+<div role="region" aria-label="destination">
+<table><tr>
+<td>Multiply</td>
+<th>3</th>
+<th>4</th>
+<th>5</th>
+</tr><tr>
+<th>3</th>
+<td></td><td></td><td></td>
+</tr><tr>
+<th>4</th>
+<td></td><td></td><td></td>
+</tr><tr>
+<th>5</th>
+<td></td><td></td><td></td>
+</tr></table>
+</div>
+
+<script>
+const source = document.querySelector("ul");
+const destination = document.querySelector("table");
+for (const x of [...source.children]) {
+const text = x.textContent;
+x.innerHTML = `<button data-value="${text}" aria-selected="false">${text}</button>`;
+} // for
+
+enableSource(source);
+enableDestination(source, destination);
+enableSequentialNavigation(document.querySelector("#sequential-navigation"));
+
+function enableSource (x) {
+x.addEventListener("click", e => {
+if (e.target.getAttribute("aria-selected") === "true") unselect(e.target);
+else select (e.target);
+}); // click
+
+} // enableSource
+
+function enableDestination (source, destination) {
+destination.addEventListener("click", e => {
+if (e.target.tagName.toLowerCase() !== "td") return;
+const headers = findHeaderCells(e.target);
+const item = source.querySelector("[aria-selected=true]");
+if (not(item)) return;
+if (check(...headers, item)) move(item, e.target);
+else alert("no.");
+}); // click
+} // enableDestination
+
+function enableSequentialNavigation (enable) {
+enable.addEventListener("change", e => {
+if (e.target.checked) addSequentialNavigation(destination);
+else removeSequentialNavigation(destination);
+}); // change
+} // enableSequentialNavigation
+
+function addSequentialNavigation (destination) {
+for (const td of [...destination.querySelectorAll("td")]) {
+const headers = findHeaderCells(td);
+const r = Number(headers[0].textContent), c = Number(headers[1].textContent);
+td.setAttribute("title", `${r} times ${c}`);
+td.setAttribute("tabindex", "0");
+} // for
+
+destination.setAttribute("role", "presentation");
+} // addSequentialNavigation
+
+function removeSequentialNavigation (destination) {
+destination.querySelectorAll("td").forEach(x => {
+x.removeAttribute("tabindex");
+x.removeAttribute("title");
+});
+
+destination.removeAttribute("role");
+} // removeSequentialNavigation
+
+
+function select (x) {
+clearSelection(source);
+x.setAttribute("aria-selected", "true");
+x.textContent = `(${x.dataset.value})`;
+} // select
+
+function unselect (x) {
+clearSelection(source);
+x.textContent = x.dataset.value;
+} // unselect
+
+function clearSelection (source) {
+source.querySelectorAll("[aria-selected]").forEach(x => x.setAttribute("aria-selected", "false"));
+} // clearSelection
+
+
+function move (source, destination) {
+destination.textContent = source.dataset.value;
+source.parentElement.remove();
+} // move
+
+function check (row, column, value) {
+console.log("checdk: ", row, column, value);
+return Number(row.textContent) * Number(column.textContent) === Number(value.dataset.value);
+} // check
+
+
+function findHeaderCells (td) {
+if (td.tagName.toLowerCase() !== "td") return;
+const rowHeader = td.parentElement.querySelector("th");
+const c = [...td.parentElement.querySelectorAll("td")].indexOf(td);
+const columnHeader = td.closest("table").querySelector("tr").querySelectorAll("th")[c];
+return [rowHeader, columnHeader];
+} // findHeaderCells
+
+
+function not (x) {return !x;}
+</script>
+
+</body>
+</html>

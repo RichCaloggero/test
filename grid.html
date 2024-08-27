@@ -1,0 +1,76 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Test</title>
+<style>
+ul {list-style-type: none;}
+</style>
+</head>
+<body>
+<h1>grid test</h1>
+
+<details>
+<summary  role="heading" aria-level=2" style="list-style-type: none">click to see this</summary>
+
+<p><button>--start--</button></p>
+
+<div role="grid" aria-label="my grid">
+<ul role="row">
+<li role="columnheader">column 1</li>
+<li role="columnheader">column 2</li>
+<li role="columnheader">column 3</li>
+</ul><ul role="row">
+<li role="gridcell">1.1</li>
+<li role="gridcell">1.2</li>
+<li role="gridcell">1.3</li>
+</ul><ul role="row">
+<li role="gridcell">2.1</li>
+<li role="gridcell">2.2</li>
+<li role="gridcell">2.3</li>
+</ul><ul role="row">
+<li role="gridcell">3.1</li>
+<li role="gridcell">3.2</li>
+<li role="gridcell">3.3</li>
+</ul>
+</div>
+</details>
+
+<script>
+document.querySelector("[role='grid']").addEventListener("keydown", gridNavigation);
+setFocus(document.querySelector("[role=gridcell]"));
+
+function gridNavigation (e) {
+console.log("navigate: ", e);
+const cell = e.target;
+if (cell) {
+switch (e.key) {
+case "ArrowRight": setFocus(cell.nextElementSibling); break;
+case "ArrowLeft": setFocus(cell.previousElementSibling); break;
+} // switch
+} // if
+} // gridNavigation
+
+function setFocus (cell) {
+console.log("focusing ", cell);
+if (cell) {
+const grid = cell.closest("[role='grid']");
+if (grid) {
+clearFocus();
+cell.setAttribute("tabindex", "0");
+cell.focus();
+console.log("- ", cell);
+} // if
+} // if
+} // setFocus
+
+function clearFocus () {
+const cell = document.querySelector("[role='grid'] [tabindex='0']");
+if (cell) cell.removeAttribute("tabindex");
+} // clearFocus
+
+</script>
+
+
+</body>
+</html>

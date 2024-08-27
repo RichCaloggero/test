@@ -6,22 +6,22 @@
 <style>
 nav ul {list-style-type: none;}
 
-summary {list-style: none}
-summary::-webkit-details-marker {display: none; } /* for chrome */
+/*summary {list-style: none}*/
+/*summary::-webkit-details-marker {display: none; }*/ /* for chrome */
 
-/*details summary::before { 
-  content:"??"; 
+details summary::before { 
+  content: "+"; 
   color: red; 
-  */
-}
+  }
+
 </style>
 </head>
 <body>
 <nav>
 <ul><li>
-<details role="presentation"><summary><h2>Fruits</h2></summary>
+<details><summary><h2>Fruits</h2></summary>
 <ul><li>
-<details role="presentation"><summary>mellons</summary>
+<details><summary>mellons</summary>
 <ul><li>
 watermellon
 </li><li>
@@ -30,7 +30,7 @@ honey due mellon
 </details>
 
 </li><li>
-<details role="presentation"><summary>citrus</summary>
+<details><summary>citrus</summary>
 <ul><li>
 orange
 </li><li>
@@ -46,9 +46,9 @@ apple
 </details>
 
 </li><li>
-<details role="presentation"><summary><h2>vegetables</h2></summary>
+<details"><summary><h2>vegetables</h2></summary>
 <ul><li>
-<details role="presentation"><summary>root vegetables</summary>
+<details"><summary>root vegetables</summary>
 <ul><li>
 carrot
 </li><li>
@@ -57,7 +57,7 @@ potato
 </details>
 
 </li><li>
-<details role="presentation"><summary>greens</summary>
+<details"><summary>greens</summary>
 <ul><li>
 spinach
 </li><li>
@@ -70,6 +70,15 @@ lettuce
 
 </li></ul>
 </nav>
+
+<hr>
+<details><summary>root vegetables</summary>
+<ul><li>
+carrot
+</li><li>
+potato
+</li></ul>
+</details>
 
 </body>
 </html>
