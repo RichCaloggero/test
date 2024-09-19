@@ -1,0 +1,51 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Test</title>
+
+</head>
+<body>
+<template id="item">
+<div class="item">
+<h2><a href="#">Item <span class="number"></span></a></h2>
+<p>... content for item <span class="number"></span> ...</p>
+</div>
+</template>
+
+<div class="container"></div>
+
+<script>
+/*document.querySelector(".container").addEventListener("focusin", e => {
+const element = e.target.closest(".item");
+if (element.matches(".container .item:last-of-type")) addItems(3);
+});
+*/
+
+document.addEventListener("scroll", e => {
+addItems(25);
+});
+
+/*document.addEventListener("scrollend", e => {
+alert(`scrollEnd: ${e.target}`);
+});
+*/
+
+addItems(25);
+
+function addItems (n) {
+const count = document.querySelectorAll(".container .item").length;
+for (let i=1; i<=n; i++) document.querySelector(".container").appendChild(generateItem(count+i));
+} // addItems
+
+
+function generateItem (n) {
+const $item = document.querySelector("#item").content.cloneNode(true).firstElementChild;
+$item.querySelectorAll(".number").forEach(x => x.textContent = n);
+return $item;
+} // generateItem
+
+</script>
+
+</body>
+</html>
