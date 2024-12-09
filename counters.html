@@ -1,0 +1,82 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Test</title>
+<style>
+summary {list-style-type: none;}
+details, summary {display: inline;}
+
+ol {
+counter-reset: outline;
+list-style-type: none;
+}
+
+ol li::before {
+counter-increment: outline;
+content: counters(outline, ".") " ";
+}
+
+/*details summary::before { 
+  content: "+"; 
+  color: red; 
+  }
+details[open] summary::before { 
+  content: "-"; 
+  color: red; 
+  }
+*/
+
+</style>
+</head>
+<body>
+<nav>
+<ol><li>
+<details><summary>Fruits</summary>
+<ol><li>
+<details><summary>mellons</summary>
+<ol><li>
+watermellon
+</li><li>
+honey due mellon
+</li></ol></details>
+
+</li><li>
+<details><summary>citrus</summary>
+<ol><li>
+orange
+</li><li>
+grapefruit
+</li></ol></details>
+
+</li><li>
+grape
+</li><li>
+apple
+</li></ol></details>
+
+</li><li>
+vegetables
+<ol><li>
+root vegetables
+<ol><li>
+carrot
+</li><li>
+potato
+</li></ol>
+
+</li><li>
+greens
+<ol><li>
+spinach
+</li><li>
+lettuce
+</li></ol>
+
+</li></ol>
+
+</li></ol>
+</nav>
+
+</body>
+</html>
