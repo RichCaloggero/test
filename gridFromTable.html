@@ -1,0 +1,111 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Test</title>
+</head>
+<body>
+<h1>grid test</h1>
+
+
+<p><button>--start--</button></p>
+
+<table role="grid" aria-label="my grid">
+<tr >
+<th >column 1</th>
+<th >column 2</th>
+<th >column 3</th>
+</tr><tr >
+<td >1.1</td>
+<td >1.2</td>
+<td >1.3</td>
+</tr><tr >
+<td >2.1</td>
+<td >2.2</td>
+<td >2.3</td>
+</tr><tr >
+<td >3.1</td>
+<td >3.2</td>
+<td >3.3</td>
+</tr>
+</table>
+
+<script>
+document.querySelector("[role='grid']").addEventListener("keydown", gridNavigation);
+document.querySelector("[role='grid']").addEventListener("keydown", rowSelection);
+document.querySelectorAll("[role=grid]").forEach(grid => {
+clearSelection(grid);
+grid.querySelector("td").tabIndex = 0
+});
+
+function gridNavigation (e) {
+console.log("navigate: ", e);
+const cell = e.target;
+if (cell) {
+const row = cell.parentElement;
+const index = [...row.children].indexOf(cell);
+
+switch (e.key) {
+case "ArrowRight": setFocus(cell.nextElementSibling); break;
+case "ArrowLeft": setFocus(cell.previousElementSibling); break;
+case "ArrowUp": setFocus(row.previousElementSibling?.children[index]); break;
+case "ArrowDown": setFocus(row.nextElementSibling?.children[index]); break;
+} // switch
+} // if
+} // gridNavigation
+
+function rowSelection (e) {
+console.log("selection: ", e);
+if (e.target && e.target instanceof HTMLTableCellElement) {
+const cell = e.target;
+if (e.key && e.key === " ") {
+selectRow(cell.parentElement);
+setFocus(cell);
+} // if
+} // if
+} // rowSelection
+
+function clearSelection (grid) {
+console.log("clearSelection: ", grid);
+grid.querySelectorAll("td").forEach(cell => cell.setAttribute("aria-selected", "false"));
+} // clearSelection
+
+function setFocus (cell) {
+console.log("focusing ", cell);
+if (cell) {
+const grid = cell.closest("[role='grid']");
+if (grid) {
+clearFocus();
+cell.setAttribute("tabindex", "0");
+cell.focus();
+console.log("- ", cell);
+} // if
+} // if
+} // setFocus
+
+function clearFocus () {
+const cell = document.querySelector("[role='grid'] [tabindex='0']");
+if (cell) cell.removeAttribute("tabindex");
+} // clearFocus
+
+function toggleCellSelection (cell) {
+console.log("toggleCellSelection: ", cell);
+cell.setAttribute("aria-selected",
+(cell.getAttribute("aria-selected") === "true"? "false" : "true")
+); // setAttribute
+} // toggleCellSelection
+
+function selectRow (row) {
+console.log("selectRow: ", row);
+
+if (row && row instanceof HTMLTableRowElement) {
+row.querySelectorAll("td").forEach(cell => toggleCellSelection(cell));
+} // if
+} // selectRow
+
+
+</script>
+
+
+</body>
+</html>
