@@ -1,0 +1,25 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Test</title>
+</head>
+<body>
+<h1>Overflow</h1>
+
+<h2>Expected behavior</h2>
+<ul><li>
+only the two buttons (in tab order: 1, and in tab order:2) should be in the tab order and focusable
+</li><li>
+actual behavior in firefox: the buttons, and the div itself gain focus when tabbing
+</li></ul>
+
+<p><button>in tab order: 1</button></p>
+
+<div style="overflow-y:hidden; width:500px; height:10px;">
+<p>Everything in here is read by screen reader when attempting to tab into this div...</p>
+<p><button>in tab order: 2</button></p>
+</div>
+
+</body>
+</html>
