@@ -1,0 +1,24 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+<title>Popover API</title>
+</head>
+<body>
+<h1>Popover API</h1>
+
+<p><button popoverTarget="my-dialog" accessKey="p">Click this button to launch a dialog via HTML (no javascript required).</button></p>
+
+<p>Click the button above to see the dialog...</p>
+
+<dialog popover id="my-dialog">
+<div class="actions">
+<button class="close" popoverTarget="my-dialog" popoverTargetAction="hide">Close</button>
+</div>
+
+<p>You have successfully launched a dialog using only HTML. Screen reader focus and browser keyboard focus remain confined to this dialog until it is dismissed. Once dismissed, focus automatically returns to the control that launched it.</p>
+
+</div>
+
+</body>
+</html>
+
