@@ -3,6 +3,10 @@
 <head>
 <meta charset="UTF-8" />
 <title>Test</title>
+<style>
+.icon.checked::before {content: "[checked]"}
+</style>
+
 </head>
 <body>
 <h1>Tree</h1>
@@ -22,24 +26,25 @@ setFocus(getFocus($tree), $tree);
 
 $tree.addEventListener("keydown", e => {
 let $node = getFocus($tree);
-if (e.key === "ArrowDown") setFocus(nextSibling($node), $tree);
+if (e.key === " " || e.key === "Enter") toggleState($node);
+else if (e.key === "ArrowDown") setFocus(nextSibling($node), $tree);
 else if (e.key === "ArrowUp") setFocus(previousSibling($node), $tree);
 else if (e.key === "ArrowRight" && $node.hasAttribute("aria-expanded")) setFocus(downLevel($node), $tree);
 else if (e.key === "ArrowLeft" && $node.parentElement.hasAttribute("aria-expanded")) setFocus(upLevel($node), $tree);
 });
 
-function buildTree (choices, label) {
-let html = (label)? `<div role="treeitem" aria-expanded="false" aria-label="${label}">
-<span class="icon"></span>
+function buildTree (choices, label, level = 1) {
+let html = (label)? `<div role="treeitem" aria-expanded="false" aria-label="${label}" aria-level="${level-1}" aria-checked="false">
+<span class="icon unchecked" aria-hidden="true"></span>
 ${label}
 ` : "";
 
 for (choice of choices) {
 if (choice instanceof Object) {
-html += buildTree(choice.choices, choice.label);
+html += buildTree(choice.choices, choice.label, level+1);
 } else {
-html += `<div role="treeitem" tabindex="-1">
-<span class="icon"></span>
+html += `<div role="treeitem" tabindex="-1" aria-level="${level}" aria-checked="false">
+<span class="icon unchecked" aria-hidden="true"></span>
 ${choice}
 </div>
 `;
@@ -49,6 +54,22 @@ ${choice}
 if (label) html += "\n</div>\n";
 return html;
 } // buildTree
+
+function toggleState ($node, state) {
+if (typeof(state) === "undefined") {
+$node.setAttribute("aria-checked",
+$node.getAttribute("aria-checked") === "true"? "false" : "true"
+);
+} else {
+$node.setAttribute("aria-checked", Boolean(state)? "true" : "false");
+} // if
+$node.querySelector(".icon").className = $node.getAttribute("aria-checked") === "true"?
+"icon checked" : "icon unchecked";
+
+if ($node.hasAttribute("aria-expanded")) {
+$node.querySelectorAll("[role='treeitem']").forEach($subnode => toggleState($subnode, $node.getAttribute("aria-checked") === "true"));
+} // if
+} // toggleState
 
 function nextSibling ($node) {
 $newNode = $node.nextElementSibling;
