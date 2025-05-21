@@ -23,7 +23,7 @@ const $tree = document.querySelector("[role='tree']");
 const choices = [
 "chemistry", "biology", "physics", "mathematics", "computer science",
 {label: "engineering", choices: [
-"mechanical engineering", "civil engineering", "electrical engineering"]
+{label: "mechanical engineering", choices: ["robotics"]}, "civil engineering", "electrical engineering"]
 }];
 
 $tree.insertAdjacentHTML("beforeEnd", buildTree(choices));
@@ -39,7 +39,7 @@ else if (e.key === "ArrowLeft" && $node.parentElement.hasAttribute("aria-expande
 });
 
 function buildTree (choices, label, level = 1) {
-let html = (label)? `<div role="treeitem" aria-expanded="false" aria-label="${label}" aria-level="${level-1}" aria-checked="false">
+let html = (label)? `<div role="treeitem" aria-expanded="false" aria-label="${label}" aria-level="${level-1}" aria-checked="false" style="padding-left: ${(level-1) * 5}em">
 <span class="icon unchecked" aria-hidden="true"></span>
 ${label}
 ` : "";
@@ -48,7 +48,7 @@ for (choice of choices) {
 if (choice instanceof Object) {
 html += buildTree(choice.choices, choice.label, level+1);
 } else {
-html += `<div role="treeitem" tabindex="-1" aria-level="${level}" aria-checked="false">
+html += `<div role="treeitem" tabindex="-1" aria-level="${level}" aria-checked="false" style="padding-left: ${level * 5}em">
 <span class="icon unchecked" aria-hidden="true"></span>
 ${choice}
 </div>
