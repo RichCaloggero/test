@@ -1,0 +1,61 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Test</title>
+</head>
+<body>
+<h1>Test</h1>
+
+<div class="exam">
+<fieldset class="question" id="q1">
+<legend><h2>Which of the following characteristics of experimental design ensure causation when done correctly?</h2></legend>
+
+<ul><li><label>
+<input type="radio" name="answer" value="1"> Being sure to have both a dependent and independent variables. 
+</label></li><li><label>
+<input type="radio" name="answer" value="2"> Dividing people into two or more conditions through random assignment. 
+</label></li><li><label>
+<input type="radio" name="answer"  value="3"> Doing a statistical analysis of the data. 
+</label></li><li><label>
+<input type="radio" name="answer" value="4"> Making sure that all participants are identical. 
+</label></li>
+</ul>
+
+<button class="check-answer">Check answer</button>
+</div><!-- end .question -->
+</div><!-- end .exam -->
+
+<script>
+const data = {
+"q1": 2
+}; // data
+const $exam = document.querySelector(".exam");
+
+$exam.addEventListener("click", e => checkAnswer(e.target));
+//$exam.addEventListener("change", e => resetStatus(e.target));
+
+function resetStatus (control) {
+const $question = control.closest(".question");
+$question.querySelectorAll(".status").forEach(x => x.remove());
+} //  resetStatus
+
+function checkAnswer ($control) {
+if ($control.className === "check-answer") {
+resetStatus($control);
+const $question = $control.closest(".question");
+const id = $question.id;
+const answer = data[id];
+const $selection = $question.querySelector("input:checked");
+debugger;
+
+const status = answer === Number($selection.value)? "correct" : "incorrect";
+$selection.insertAdjacentHTML ("beforeBegin", `<div class="status" role="alert">${status}</div>`);
+} // if
+} // checkAnswer
+
+
+</script>
+
+</body>
+</html>

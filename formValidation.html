@@ -1,0 +1,66 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+<title>Test of HTML form validation</title>
+</head>
+<body>
+<h1>Form Validation</h1>
+
+<form name="html-form" onsubmit="return false">
+<label>Name: <input required name="name"></label>
+<br><label>eMail: <input type="email" name="eMail"></label>
+<br><label> which do you prefer: <select required><option value="">--select one--</option><option>Chocolate</option><option>Vanilla</option></select></label>
+<br><button  type="submit">Submit</button>
+</form>
+
+<hr><div id="my-form">
+<label>Name: <input required name="name"></label>
+<br><label>eMail: <input type="email" name="eMail"></label>
+<br><label> which do you prefer: <select required><option value="">--select one--</option><option>Chocolate</option><option>Vanilla</option></select></label>
+<br><button  type="submit">Submit</button>
+</div>
+
+<script>
+const form = document.querySelector("#my-form");
+
+form.addEventListener("click", e => {
+e.preventDefault();
+const invalid = [...form.querySelectorAll("input, select")].filter(x => x.checkValidity() === false);
+if (invalid.length > 0) invalid[0].reportValidity();
+});
+</script>
+
+
+<hr><div id="aria-form">
+<label>Name: <input id="name"></label>
+<span id="name-error" hidden>Name is a required field</span>
+<br><button type="submit">Submit</button>
+</div>
+
+<script>
+const ariaForm = document.querySelector("#aria-form");
+ariaForm.addEventListener("click", e => {
+const name = ariaForm.querySelector("#name");
+const nameError = ariaForm.querySelector("#name-error");
+console.log("value is ", name.value);
+if (name.value === "") {
+name.setAttribute("aria-describedby", "name-error");
+nameError.hidden = false;
+name.focus();
+} // if
+});
+
+ariaForm.addEventListener("input", e => {
+const id = e.target.getAttribute("aria-describedby");
+if (id) {
+document.getElementById(id).hidden = true;
+e.target.removeAttribute("aria-describedby");
+} // if
+});
+
+
+</script>
+
+
+</body>
+</html>
