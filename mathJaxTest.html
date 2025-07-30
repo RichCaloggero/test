@@ -1,0 +1,93 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>test</title>
+<script>
+MathJax = {
+loader: {
+load: [
+"input/asciimath",
+"output/svg",
+] // components
+}, // loader
+}; // MathJax configuration
+</script>
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js"></script>
+</head>
+<body>
+<h1>Test</h1>
+
+<p>This is meant to illustrate a few problems with MathJax3 when in explorer mode (i.e. when mathjax itself is generating text for screen readers):</p>
+<ol>
+<li>it is difficult to escape from expressions once inside them</li>
+<li>the menus do not speak correctly: some items speak in full, some items only speak the first bit of the text label</li>
+<li>pressing any key, even raw modifiers, can trigger the writing of text to the live region</li>
+</ol>
+<h2 id="hacked-solution">Hacked solution</h2>
+<p>The fix for issue 2 (expression escape) is  to assign a different role other than "application", and one which also switches screen reader modes like "application" does, then you can escape from it with the escape key. Here I assign <code>role="tree"</code> and <code>aria-roledescription="math"</code>.</p>
+<p>I have no idea why the menus are speaking incorrectly. The menu structure seems ok, and proper aria roles are used. There could be something being written to a live region after an item gains focus that is cutting of the speech from the announcement of the item's label when it gains focus, but I cannot verify this.</p>
+<p>There do seem to be two live region elements, both with same attributes and marked <code>aria-live="assertive"</code> however which is a bit odd.</p>
+<ul>
+<li>why two</li>
+<li>"assertive" doesn't really work, and even if it did, it might in fact create the behavior I am seeing, i.e. cutting of cureently processing speech
+<ul>
+<li>from what I can see, "polite" and "assertive" seem to have identical behavior in NVDA; behavior may differ using different screen readers</li>
+</ul></li>
+</ul>
+<h2 id="testing">Testing</h2>
+<ol>
+<li>be sure MathJax is generating speech; this also demonstrates issue 3 as well
+<ul>
+<li>with NVDA running, tab to an expression and press application key or shift+f10 or right click mouse</li>
+<li>navigate to accessibility; note how NVDA sometimes cuts off menu labels</li>
+<li>be sure that
+<ul>
+<li>active: checked</li>
+<li>include hidden MathML: unchecked</li>
+<li>collapsible math: unchecked</li>
+</ul></li>
+</ul></li>
+<li>navigate the page with arrows in browse mode
+<ul>
+<li>you hear each expression's textual description read, along with the MathJax container's role name of "application"</li>
+</ul></li>
+<li>navigate to any expression with tab when screen reader is in browse mode</li>
+<li>now try to arrow around
+<ul>
+<li>your stuck inside the application role</li>
+<li>you can navigate the math expression, but even pressing escape or the screen reader's "return to browse mode" key (NVDAKey+space or JawsKey+z) does not allow you to navigate the page</li>
+</ul></li>
+<li>press the "substitute role" button
+<ul>
+<li>you should now be able to tab to an expression, hear NVDA switch into forms mode, navigate around the math as normal, and escape gets you out</li>
+<li>here one press of escape gets me out, you you might have to press it twice</li>
+</ul></li>
+</ol>
+
+<hr>
+
+<p><button id="substitute">substitute role</button></p>
+
+<p>When `a != 0`, there are two solutions to `ax^2 + bx + c = 0`,
+<br>and they are
+`x = (-b +- sqrt(b^2-4ac))/(2a)`.
+</p>
+
+<script>
+document.querySelector("#substitute").addEventListener("click", fixMathJaxExpressions);
+
+function fixMathJaxExpressions () {
+document.body.querySelectorAll("[role='application']").forEach(element => {
+// this replaces application roles with a role that frees the keyboard like application, but can be escaped from with the escape key
+element.setAttribute("role", "tree");
+// this silences the role name (tab makes no sense, so say nothing instead, or announce "math" if desired)
+element.setAttribute("aria-roledescription", "math");
+}); // forEach
+} // fixMathJaxExpressions
+
+</script>
+
+</body>
+</html>
