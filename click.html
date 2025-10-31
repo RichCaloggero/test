@@ -1,0 +1,39 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Test</title>
+</head>
+<body>
+<h1>Test</h1>
+<p>This button generates an alert when windows screen reader is running in response to control+spacebar and control+enter, but not unmodified spacebar or enter keys.</p>
+
+<div><button id="click">click me</button></div>
+
+<div id="log"></div>
+
+
+<script>
+const ss = window.speechSynthesis;
+let messageCount = 0;
+click.addEventListener("click", e => message("click handler."));
+click.addEventListener("keydown", e => {
+if (e.key === "Enter" || e.key === " ") message("keydown handler.");
+});
+
+function message (s) {
+const text = `${++messageCount}: ${s}\n`;
+log.textContent = text;
+speak(text, ss);
+} // message
+
+
+function speak (text, ss) {
+const speech = new SpeechSynthesisUtterance ();
+speech.text = text;
+ss.speak(speech);
+} // speak
+</script>
+
+</body>
+</html>
