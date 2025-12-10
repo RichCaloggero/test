@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en"
+<head>
+<meta charset="utf-8">
+<title>list test</title>
+</head>
+<body>
+<h1>list test</h1>
+
+<div role="log" id="results"></div>
+
+
+
+<script>
+let result = 0;
+let t0 = performance.now();
+console.log("start...");
+
+result = runTest (10000000, consO, firstO, restO);
+console.log("object test: ", result, "; ", performance.now() - t0, "\n");
+
+t0 = performance.now();
+result = runTest (10000000, consA, firstA, restA);
+console.log("array test: ", result, "; ", performance.now() - t0, "\n");
+console.log("done.");
+
+
+function runTest (count, cons, first, rest) {
+let l = cons(Math.random(), null);
+for (let i=0; i < count; i++) l = cons(Math.random(), l);
+
+let sum = 0;
+console.log("length: ", length(l), "\n");
+while (l) {
+sum += first(l);
+l = rest(l);
+} // while
+
+return sum / count+1;
+
+function length (l) {
+let result = 0;
+while(l) {
+result += 1;
+l = rest(l);
+} // while
+
+return result;
+} // length
+
+} // runTest
+
+function consO (first, rest) { return {first, rest};}
+function consA (first, rest) { return [first, rest]; }
+
+function firstO (l) {return l.first;}
+function restO (l) {return l.rest;}
+
+function firstA (l) {return l[0];}
+function restA (l) {return l[1];}
+
+
+
+</script>
+
+</body>
+</html>
